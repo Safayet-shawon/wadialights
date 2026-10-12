@@ -62,7 +62,7 @@
   "rewrites": [
     {
       "source": "/product/:slug",
-      "destination": "/product.html"
+      "destination": "/product"
     }
   ]
 }
