@@ -1,4 +1,4 @@
-// Easy-to-replace brand + catalogue data. All of it is demonstration content.
+// Easy-to-replace brand + catalogue data. Edit these to change the plates on the home page.
 export const BRAND = {
   name: 'WADIA',
 };

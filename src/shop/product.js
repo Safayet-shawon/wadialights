@@ -51,7 +51,7 @@ export async function initProduct() {
           <li><a href="${telLink}">Call ${esc(BUSINESS.phoneDisplay)}</a></li>
           <li><a href="/contact?product=${esc(p.slug)}">Ask a question</a></li>
         </ul>
-        ${p.is_demo ? '<p class="placeholder-tag">Sample listing: exact model, finish and price are confirmed by the shop</p>' : ''}
+        
       </div>
     </div>
     ${related.length ? `<section class="related" aria-labelledby="rel-h"><h2 id="rel-h">You may also like</h2><ul class="cat-grid" id="related-grid">${related.map((r) => cardHTML(r, esc)).join('')}</ul></section>` : ''}`;

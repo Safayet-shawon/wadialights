@@ -67,7 +67,7 @@
 
   <header class="nav" id="nav">
     <a class="nav__brand" href="#hero" aria-label="WADIA, back to the top"><span class="logo logo--nav" role="img" aria-label="WADIA Lights and Automation"><svg class="logo__bulb" viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path class="lb-p" pathLength="1" d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path class="lb-p" pathLength="1" d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path class="lb-p" pathLength="1" d="M28 92l28-6"/><path class="lb-p" pathLength="1" d="M30 102l26-6"/><path class="lb-p" pathLength="1" d="M34 112l18-4"/></g></svg><i class="logo__dots" aria-hidden="true"></i><span class="logo__text"><b>WA<em>D</em>IA</b><small>Lights &amp; Automation</small></span></span></a>
-    <nav class="nav__links" aria-label="Primary">
+    <nav class="nav__links" id="nav-links" aria-label="Primary">
       <a href="/shop">Shop</a>
       <a href="/planner">Planner</a>
       <a href="#craft">Craft</a>
@@ -76,6 +76,7 @@
     </nav>
     <a class="nav__cart" href="/cart" aria-label="Shopping cart"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="cart-badge" id="cart-badge" hidden>0</span></a>
     <button id="nav-style" class="nav__style" type="button" aria-label="Change button style" title="Change button style"><span aria-hidden="true">Aa</span></button>
+    <button id="nav-menu" class="nav__menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span aria-hidden="true"></span></button>
     <button id="sound" class="nav__sound" type="button" aria-pressed="true" aria-label="Switch sound off">
       <span class="nav__sound-icon" aria-hidden="true"></span><span class="nav__sound-text">Sound on</span>
     </button>
@@ -103,7 +104,7 @@
           <header class="section-head">
             <p class="eyebrow eyebrow--ink"><span class="num">I</span> The collection</p>
             <h2 id="collection-title">Five ways to hold a light.</h2>
-            <p class="section-head__note">Five kinds of light to choose from. The pictures are sample images; exact models, finishes and prices are confirmed by the shop.</p>
+            <p class="section-head__note">Five kinds of light to choose from. We confirm the exact model, finish and price with you before anything is dispatched.</p>
           </header>
           <ol class="plates" id="plates"></ol>
           <p class="section-cta"><a class="btn btn--solid" href="/shop">Shop all lights</a></p>
@@ -131,7 +132,6 @@
             <p class="eyebrow"><span class="num">II</span> The craft</p>
             <h2 id="craft-title">Materials that <em>shape</em> the glow.</h2>
             <p class="craft__intro">A good lamp is judged at the hour when everything else has gone quiet. These are the materials we look at first when choosing a light.</p>
-            <p class="placeholder-tag">Sample photographs. Ask us about the finishes we stock.</p>
           </header>
           <ol class="chapters">
             <li class="chapter" data-material="glass">
@@ -208,7 +208,6 @@
             <div class="featured__actions">
               <button id="toggle-light" class="btn btn--solid" type="button" aria-pressed="true">Switch off</button>
             </div>
-            <p class="placeholder-tag">Sample photograph. No specifications implied.</p>
           </div>
         </div>
       </section>

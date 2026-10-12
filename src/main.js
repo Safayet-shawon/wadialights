@@ -15,7 +15,7 @@ import { playLoader } from './loader.js';
 import * as ui from './ui.js';
 import { initButtonStyles } from './buttons.js';
 import { whenNear } from './util.js';
-import { mountFooter, bindCartBadge } from './shell.js';
+import { mountFooter, bindCartBadge, initNavMenu } from './shell.js';
 
 const $ = (s) => document.querySelector(s);
 const html = document.documentElement;

@@ -353,10 +353,8 @@ input[type='range']::-moz-range-thumb { width: 28px; height: 28px; border-radius
   .viewer { max-height: none; }
 }
 @media (max-width: 760px) {
-  .nav { flex-wrap: wrap; row-gap: .2rem; }
-  .nav__links { order: 3; width: 100%; margin: 0; gap: 1.1rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-  .nav__links::-webkit-scrollbar { display: none; }
-  .nav__links a { font-size: .66rem; letter-spacing: .22em; white-space: nowrap; }
+  .nav { flex-wrap: nowrap; }
+  .nav__links { display: none; }
   .nav__brand { font-size: .74rem; letter-spacing: .32em; }
   .nav__sound-text { display: none; }
   .hero { align-items: flex-end; padding-bottom: clamp(56px, 12vh, 110px); }

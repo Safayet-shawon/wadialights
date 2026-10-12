@@ -18,13 +18,27 @@ export function mountHeader(active = '') {
   const link = (href, label, key) => `<a href="${href}"${active === key ? ' aria-current="page"' : ''}>${label}</a>`;
   el.outerHTML = `<header class="nav is-solid" id="nav">
     <a class="nav__brand" href="/" aria-label="WADIA, home">${LOGO('logo--nav')}</a>
-    <nav class="nav__links" aria-label="Primary">
+    <nav class="nav__links" id="nav-links" aria-label="Primary">
       ${link('/shop', 'Shop', 'shop')}${link('/planner', 'Planner', 'planner')}${link('/#craft', 'Craft', 'craft')}${link('/contact', 'Contact', 'contact')}
     </nav>
     ${cartLinkHTML()}
     <button id="nav-style" class="nav__style" type="button" aria-label="Change button style" title="Change button style"><span aria-hidden="true">Aa</span></button>
+    <button id="nav-menu" class="nav__menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span aria-hidden="true"></span></button>
   </header>`;
   bindCartBadge();
+  initNavMenu();
+}
+
+/** mobile menu: the links open as a panel under the header instead of squeezing into a second row */
+export function initNavMenu() {
+  const nav = document.getElementById('nav'), btn = document.getElementById('nav-menu');
+  if (!nav || !btn || btn.dataset.bound) return;
+  btn.dataset.bound = '1';
+  const set = (open) => { nav.style.setProperty('--nav-h', nav.offsetHeight + 'px'); nav.classList.toggle('is-open', open); btn.setAttribute('aria-expanded', String(open)); btn.setAttribute('aria-label', open ? 'Close menu' : 'Menu'); };
+  btn.addEventListener('click', () => set(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', (e) => { if (e.target.closest('.nav__links a')) set(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('is-open')) { set(false); btn.focus(); } });
+  matchMedia('(min-width: 761px)').addEventListener('change', (m) => { if (m.matches) set(false); });
 }
 
 export function bindCartBadge() {
