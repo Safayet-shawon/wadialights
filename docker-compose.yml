@@ -1,0 +1,48 @@
+# WADIA: two app replicas behind an nginx load balancer, plus an optional local Postgres.
+#   docker compose up --build                       app on http://localhost:8080 (no database: demo catalogue, forms say so)
+#   docker compose --profile db up --build          also starts Postgres and the app connects to it
+#   docker compose run --rm app npm run db:migrate  create the tables + seed (needs the db profile or POSTGRES_URL)
+#
+# With Supabase instead of the local Postgres, put its *pooled* connection string in .env as POSTGRES_URL.
+x-app: &app
+  build: .
+  restart: unless-stopped
+  environment:
+    POSTGRES_URL: ${POSTGRES_URL:-}
+    IP_SALT: ${IP_SALT:-change-me}
+    DB_POOL_MAX: ${DB_POOL_MAX:-10}
+  healthcheck:
+    test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+    interval: 30s
+    timeout: 4s
+    retries: 3
+
+services:
+  app1:
+    <<: *app
+  app2:
+    <<: *app
+
+  lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on: [app1, app2]
+    ports: ["8080:80"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-cache:/var/cache/nginx
+
+  db:
+    profiles: ["db"]
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wadia
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-wadia-local}
+      POSTGRES_DB: wadia
+    volumes: [pgdata:/var/lib/postgresql/data]
+    ports: ["5432:5432"]
+
+volumes:
+  nginx-cache:
+  pgdata:

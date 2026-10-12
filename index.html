@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" class="is-intro is-locked">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0b" />
+  <link rel="canonical" href="https://wahdialights.vercel.app/" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="WADIA" />
+  <meta property="og:title" content="WADIA — Lights &amp; Automation" />
+  <meta property="og:description" content="Pull the cord, light the room. Lamps, sconces and fixtures, plus a lighting planner for your own space." />
+  <meta property="og:url" content="https://wahdialights.vercel.app/" />
+  <meta property="og:image" content="https://wahdialights.vercel.app/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="WADIA — Lights &amp; Automation" />
+  <meta name="twitter:image" content="https://wahdialights.vercel.app/og-image.jpg" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "WADIA", "alternateName": "WADIA Lights & Automation", "url": "https://wahdialights.vercel.app", "logo": "https://wahdialights.vercel.app/icon-512.png", "slogan": "A light that feels like home."}</script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="description" content="WADIA: Lights & Automation. Pull the cord, light the room, and discover timeless lamps, sconces and fixtures." />
+  <script>try{var b=localStorage.getItem('wl-btn');document.documentElement.dataset.btn=/^(clay|glass|fabric|cut)$/.test(b)?b:'clay'}catch(e){document.documentElement.dataset.btn='clay'}</script>
+  <title>WADIA — Lights &amp; Automation</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Fixed cinematic layer ------------------------------------------------ -->
+  <div class="video-stage" id="video-stage" aria-hidden="true">
+    <video id="v-hero" class="vs" muted loop playsinline preload="none"></video>
+    <video id="v-intro" class="vs" muted playsinline preload="none"></video>
+    <video id="v-pull" class="vs is-on" muted playsinline preload="auto"></video>
+  </div>
+  <!-- live WebGL scene: only shown if the videos cannot be played -->
+  <canvas id="stage" aria-hidden="true" hidden></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="film" aria-hidden="true"></div>
+
+  <div id="loader" class="loader" role="status" aria-label="Loading">
+    <svg class="loader__bulb" viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path class="lb-p" pathLength="1" d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path class="lb-p" pathLength="1" d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path class="lb-p" pathLength="1" d="M28 92l28-6"/><path class="lb-p" pathLength="1" d="M30 102l26-6"/><path class="lb-p" pathLength="1" d="M34 112l18-4"/></g></svg>
+    <p class="loader__word">WA<em>D</em>IA</p>
+    <p class="loader__sub">Lights &amp; Automation</p>
+  </div>
+
+  <!-- Opening: darkness, cord, skip --------------------------------------- -->
+  <div id="intro" class="intro">
+    <div class="intro__brand"><span class="logo logo--lg" role="img" aria-label="WADIA Lights and Automation"><svg class="logo__bulb" viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path class="lb-p" pathLength="1" d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path class="lb-p" pathLength="1" d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path class="lb-p" pathLength="1" d="M28 92l28-6"/><path class="lb-p" pathLength="1" d="M30 102l26-6"/><path class="lb-p" pathLength="1" d="M34 112l18-4"/></g></svg><i class="logo__dots" aria-hidden="true"></i><span class="logo__text"><b>WA<em>D</em>IA</b><small>Lights &amp; Automation</small></span></span></div>
+
+    <button id="cord-hit" class="cord-hit" type="button" aria-label="Pull the light cord to illuminate the room (Enter or Space)">
+      <span class="cord-hit__ring"></span>
+    </button>
+
+    <div id="invite" class="invite">
+      <p class="invite__title">Pull to illuminate</p>
+      <p class="invite__sub">Discover the art of light.</p>
+    </div>
+
+    <button id="fallback-switch" class="btn btn--solid fallback-switch" type="button" hidden>Switch on the light</button>
+    <button id="skip" class="skip" type="button">Enter the room</button>
+  </div>
+  <div id="cover" class="cover" aria-hidden="true"></div>
+
+  <!-- Navigation ----------------------------------------------------------- -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#hero" aria-label="WADIA, back to the top"><span class="logo logo--nav" role="img" aria-label="WADIA Lights and Automation"><svg class="logo__bulb" viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path class="lb-p" pathLength="1" d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path class="lb-p" pathLength="1" d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path class="lb-p" pathLength="1" d="M28 92l28-6"/><path class="lb-p" pathLength="1" d="M30 102l26-6"/><path class="lb-p" pathLength="1" d="M34 112l18-4"/></g></svg><i class="logo__dots" aria-hidden="true"></i><span class="logo__text"><b>WA<em>D</em>IA</b><small>Lights &amp; Automation</small></span></span></a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#collection">Collection</a>
+      <a href="#planner">Planner</a>
+      <a href="#craft">Craft</a>
+      <a href="#light">Light</a>
+      <a href="#quote">Contact</a>
+    </nav>
+    <button id="nav-style" class="nav__style" type="button" aria-label="Change button style" title="Change button style"><span aria-hidden="true">Aa</span></button>
+    <button id="sound" class="nav__sound" type="button" aria-pressed="true" aria-label="Switch sound off">
+      <span class="nav__sound-icon" aria-hidden="true"></span><span class="nav__sound-text">Sound on</span>
+    </button>
+  </header>
+
+  <main id="main">
+    <!-- A · Hero (transparent: the WebGL room shows through) -->
+    <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="hero__inner">
+        <p class="eyebrow" data-reveal>The art of illumination</p>
+        <h1 id="hero-title" data-reveal>A light that feels like <em>home.</em></h1>
+        <p class="lede" data-reveal>Timeless lighting. Honest materials. An atmosphere made to last.</p>
+        <div class="cta-row" data-reveal>
+          <a class="btn btn--solid" href="#collection">Explore the collection</a>
+          <a class="btn" href="#craft">Discover our craft</a>
+        </div>
+      </div>
+      <a class="hero__cue" href="#collection" aria-label="Scroll to the collection"><span>Scroll</span><i></i></a>
+    </section>
+
+    <div class="page">
+      <!-- B · Collection -->
+      <section id="collection" class="collection paper" aria-labelledby="collection-title">
+        <div class="wrap">
+          <header class="section-head">
+            <p class="eyebrow eyebrow--ink"><span class="num">I</span> The collection</p>
+            <h2 id="collection-title">Five ways to hold a light.</h2>
+            <p class="section-head__note">Demonstration content. These plates are rendered live from the same procedural models as the opening scene; real photography, names and specifications will replace them.</p>
+          </header>
+          <ol class="plates" id="plates"></ol>
+        </div>
+      </section>
+
+      <!-- B2 · Catalogue -->
+      <section id="catalogue" class="catalogue" aria-labelledby="catalogue-title">
+        <div class="wrap">
+          <header class="section-head section-head--light">
+            <p class="eyebrow"><span class="num">I.b</span> The catalogue</p>
+            <h2 id="catalogue-title">Browse the <em>range.</em></h2>
+            <p class="section-head__note">Demonstration catalogue: names and descriptions are placeholders and no prices or technical specifications are implied.</p>
+          </header>
+          <div class="cat-tools">
+            <div class="filters" id="cat-filters" role="group" aria-label="Filter by type"></div>
+            <label class="search"><span class="sr-only">Search the catalogue</span>
+              <input type="search" id="cat-search" placeholder="Search the catalogue" maxlength="80" autocomplete="off" />
+            </label>
+          </div>
+          <ul class="cat-grid" id="cat-grid" aria-live="polite" aria-busy="true"></ul>
+          <nav class="pager" id="cat-pager" aria-label="Catalogue pages"></nav>
+        </div>
+      </section>
+
+      <!-- B3 · Lighting planner (matrix maths) -->
+      <section id="planner" class="planner" aria-labelledby="planner-title">
+        <div class="wrap">
+          <header class="section-head section-head--light">
+            <p class="eyebrow"><span class="num">I.c</span> Lighting planner</p>
+            <h2 id="planner-title">How much light does <em>your room</em> need?</h2>
+            <p class="section-head__note">Enter the room. The planner sizes the fixtures with the lumen method, then solves a matrix least-squares problem so every lamp's output is tuned for an even result, and estimates the energy and running cost, with and without automation.</p>
+          </header>
+          <div class="planner__grid">
+            <form class="planner__form" id="planner-form" novalidate>
+              <div class="field-row">
+                <label class="field"><span>Length (m)</span><input name="length" type="number" inputmode="decimal" min="1.5" max="30" step="0.1" value="5" /></label>
+                <label class="field"><span>Width (m)</span><input name="width" type="number" inputmode="decimal" min="1.5" max="30" step="0.1" value="4" /></label>
+                <label class="field"><span>Height (m)</span><input name="height" type="number" inputmode="decimal" min="2" max="6" step="0.1" value="2.6" /></label>
+              </div>
+              <label class="field"><span>What is the room for?</span><select name="purpose" id="pl-purpose"></select></label>
+              <div class="field-row">
+                <label class="field"><span>Target light (lux)</span><input name="targetLux" id="pl-lux" type="number" inputmode="numeric" min="20" max="1000" step="10" /></label>
+                <label class="field"><span>Surfaces</span>
+                  <select name="reflectance"><option value="0">Light (white / cream)</option><option value="1" selected>Medium</option><option value="2">Dark (wood / deep colours)</option></select>
+                </label>
+              </div>
+              <div class="field-row">
+                <label class="field"><span>Lamp output (lumens)</span><input name="fixtureLumens" type="number" inputmode="numeric" min="100" max="10000" step="50" value="800" /></label>
+                <label class="field"><span>Efficacy (lm/W)</span><input name="efficacy" type="number" inputmode="numeric" min="20" max="200" step="5" value="100" /></label>
+              </div>
+              <div class="field-row">
+                <label class="field"><span>Hours per day</span><input name="hours" type="number" inputmode="decimal" min="0.5" max="24" step="0.5" value="5" /></label>
+                <label class="field"><span>Price per kWh</span><input name="tariff" type="number" inputmode="decimal" min="0" max="5" step="0.01" value="0.15" /></label>
+                <label class="field"><span>Automation saving %</span><input name="automationSaving" type="number" inputmode="numeric" min="0" max="70" step="1" value="30" /></label>
+              </div>
+              <p class="planner__fine">Automation saving is an assumption you can change. Results are an estimate for planning, not a certified lighting design.</p>
+            </form>
+            <div class="planner__out" id="planner-out" aria-live="polite">
+              <div class="planner__map">
+                <canvas id="planner-map" width="640" height="480" role="img" aria-label="Heat map of light levels across the room, with fixture positions"></canvas>
+                <div class="planner__legend"><span>dim</span><i></i><span>bright</span></div>
+              </div>
+              <dl class="kpis" id="planner-kpis"></dl>
+              <ul class="planner__notes" id="planner-notes"></ul>
+              <div class="planner__actions">
+                <button class="btn btn--solid" type="button" id="planner-send">Send this plan with a quote request</button>
+                <span class="planner__src" id="planner-src"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- C · Craft -->
+      <section id="craft" class="craft" aria-labelledby="craft-title">
+        <div class="wrap craft__grid">
+          <header class="craft__lead">
+            <p class="eyebrow"><span class="num">II</span> The craft</p>
+            <h2 id="craft-title">Honest materials, <em>patiently</em> made.</h2>
+            <p class="craft__intro">A good lamp is judged at the hour when everything else has gone quiet. We begin with that hour and work backwards.</p>
+            <p class="placeholder-tag">Editorial placeholder copy</p>
+          </header>
+          <ol class="chapters">
+            <li class="chapter" data-material="glass">
+              <div class="specimen specimen--glass" aria-hidden="true"><video class="specimen__video" muted loop playsinline preload="none" data-clip="craft-glass"></video></div>
+              <div><p class="chapter__label">Specimen 01</p><h3>Glass</h3>
+              <p>Frosted and softly clouded, so a filament becomes a steady glow rather than a point of glare.</p></div>
+            </li>
+            <li class="chapter" data-material="brass">
+              <div class="specimen specimen--brass" aria-hidden="true"><video class="specimen__video" muted loop playsinline preload="none" data-clip="craft-brass"></video></div>
+              <div><p class="chapter__label">Specimen 02</p><h3>Brass</h3>
+              <p>Turned, bevelled and left to age. Brass is never finished; it simply becomes more itself.</p></div>
+            </li>
+            <li class="chapter" data-material="patina">
+              <div class="specimen specimen--patina" aria-hidden="true"><video class="specimen__video" muted loop playsinline preload="none" data-clip="craft-patina"></video></div>
+              <div><p class="chapter__label">Specimen 03</p><h3>Patina</h3>
+              <p>Warm hands and long evenings leave their mark. We design for the patina, not against it.</p></div>
+            </li>
+            <li class="chapter" data-material="wood">
+              <div class="specimen specimen--wood" aria-hidden="true"><video class="specimen__video" muted loop playsinline preload="none" data-clip="craft-walnut-linen"></video></div>
+              <div><p class="chapter__label">Specimen 04</p><h3>Walnut &amp; linen</h3>
+              <p>Dark timber to anchor the light, pale linen to let it breathe, and nothing in between that does not need to be there.</p></div>
+            </li>
+          </ol>
+        </div>
+        <blockquote class="craft__quote wrap">
+          <p>A lamp is not an object. It is the way a room feels at nine o&rsquo;clock on a winter evening.</p>
+        </blockquote>
+      </section>
+
+      <!-- D · Light transforms a room -->
+      <section id="light" class="transform" aria-labelledby="light-title">
+        <div class="wrap">
+          <header class="section-head section-head--light">
+            <p class="eyebrow"><span class="num">III</span> Light transforms a room</p>
+            <h2 id="light-title">The same room, <em>before</em> and after.</h2>
+          </header>
+          <figure class="compare" id="compare">
+            <div class="compare__stage" id="compare-stage">
+              <video class="compare__vid compare__vid--lit" id="img-lit" aria-label="The sitting room with every lamp on, warm and layered." muted loop playsinline preload="none"></video>
+              <video class="compare__vid compare__vid--dark" id="img-dark" aria-label="The same sitting room unlit, flat and grey in the last of the daylight." muted loop playsinline preload="none"></video>
+              <div class="compare__edge" id="compare-edge" aria-hidden="true"></div>
+              <button class="compare__handle" id="compare-handle" type="button" aria-label="Drag to change how much of the room is lit" aria-describedby="dimmer-note">
+                <svg viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path d="M28 92l28-6M30 102l26-6"/></g></svg>
+              </button>
+              <span class="compare__tag compare__tag--l">Illuminated</span>
+              <span class="compare__tag compare__tag--r">Unlit</span>
+              <div class="compare__wait" id="compare-wait">Loading the film&hellip;</div>
+            </div>
+            <figcaption class="compare__control">
+              <button class="btn btn--sm" type="button" id="lights-off">Lights off</button>
+              <div class="compare__range">
+                <label for="dimmer">Light</label>
+                <input id="dimmer" type="range" min="0" max="100" value="60" step="1" aria-describedby="dimmer-note" />
+                <output id="dimmer-out" for="dimmer">60%</output>
+              </div>
+              <button class="btn btn--sm btn--solid" type="button" id="lights-on">Lights on</button>
+            </figcaption>
+            <p id="dimmer-note" class="compare__note">Drag the bulb, use the slider, or press the arrow keys. Both films are the same camera move through the same room, rendered once with every lamp on and once unlit.</p>
+          </figure>
+        </div>
+      </section>
+
+      <!-- E · Featured fixture -->
+      <section id="featured" class="featured" aria-labelledby="featured-title">
+        <div class="wrap featured__grid">
+          <div class="viewer" id="viewer" role="group" aria-label="The table lamp. Drag left or right to turn it.">
+            <video class="viewer__video viewer__video--off" id="v-table-off" muted playsinline preload="none"></video>
+            <video class="viewer__video viewer__video--on" id="v-table-on" muted playsinline preload="none"></video>
+            <div class="viewer__hint" id="viewer-hint">Drag to turn</div>
+          </div>
+          <div class="featured__copy">
+            <p class="eyebrow"><span class="num">IV</span> Featured fixture</p>
+            <h2 id="featured-title"><span id="featured-name">The table lamp</span></h2>
+            <p id="featured-desc" class="featured__desc">Glass, brass and linen, made for the sideboard and the reading chair. Drag to turn it, then switch it off to see how much of the room is its light.</p>
+            <div class="featured__actions">
+              <button id="toggle-light" class="btn btn--solid" type="button" aria-pressed="true">Switch off</button>
+            </div>
+            <p class="placeholder-tag">Demonstration film &mdash; no specifications implied</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- G · Quote request + newsletter -->
+      <section id="quote" class="quote" aria-labelledby="quote-title">
+        <div class="wrap quote__grid">
+          <header class="section-head section-head--light">
+            <p class="eyebrow"><span class="num">V</span> Contact</p>
+            <h2 id="quote-title">Tell us about <em>your room.</em></h2>
+            <p class="section-head__note">Send a request and we will reply by email. If you used the planner, your plan travels with the message.</p>
+            <form class="news" id="news-form" novalidate>
+              <label class="field"><span>Occasional news, no spam</span>
+                <span class="news__row"><input type="email" name="email" placeholder="you@example.com" autocomplete="email" required /><button class="btn btn--sm" type="submit">Subscribe</button></span>
+              </label>
+              <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <p class="form-msg" id="news-msg" role="status"></p>
+            </form>
+          </header>
+          <form class="quote__form" id="quote-form" novalidate>
+            <div class="field-row">
+              <label class="field"><span>Name</span><input name="name" autocomplete="name" maxlength="120" required /><small class="err" data-for="name"></small></label>
+              <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254" required /><small class="err" data-for="email"></small></label>
+            </div>
+            <div class="field-row">
+              <label class="field"><span>Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" /><small class="err" data-for="phone"></small></label>
+              <label class="field"><span>Room</span>
+                <select name="room"><option value="">Choose a room</option><option>Living room</option><option>Bedroom</option><option>Kitchen</option><option>Dining room</option><option>Hallway</option><option>Bathroom</option><option>Home office</option><option>Showroom / shop</option><option>Other</option></select>
+              </label>
+            </div>
+            <div class="chips-row" id="quote-attach" hidden></div>
+            <label class="field"><span>How can we help?</span><textarea name="message" rows="5" maxlength="4000" required></textarea><small class="err" data-for="message"></small></label>
+            <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div class="quote__actions">
+              <button class="btn btn--solid" type="submit" id="quote-submit">Send request</button>
+              <p class="form-msg" id="quote-msg" role="status"></p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- F · Heritage footer -->
+  <footer class="footer" id="contact">
+    <div class="wrap footer__grid">
+      <div class="footer__brand">
+        <div class="footer__mark"><span class="logo logo--lg" role="img" aria-label="WADIA Lights and Automation"><svg class="logo__bulb" viewBox="0 0 80 124" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path class="lb-p" pathLength="1" d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path class="lb-p" pathLength="1" d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path class="lb-p" pathLength="1" d="M28 92l28-6"/><path class="lb-p" pathLength="1" d="M30 102l26-6"/><path class="lb-p" pathLength="1" d="M34 112l18-4"/></g></svg><i class="logo__dots" aria-hidden="true"></i><span class="logo__text"><b>WA<em>D</em>IA</b><small>Lights &amp; Automation</small></span></span></div>
+        <p class="footer__tag">Lights &amp; Automation for rooms that are lived in.</p>
+        <p class="footer__small">Brand name, address and details are placeholders.</p>
+      </div>
+      <nav aria-label="Collection"><h3>Collection</h3>
+        <ul id="footer-collection"></ul>
+      </nav>
+      <nav aria-label="Atelier"><h3>Atelier</h3>
+        <ul><li><a href="#planner">Lighting planner</a></li><li><a href="#craft">Our craft</a></li><li><a href="#light">Light &amp; room</a></li><li><a href="#featured">Featured fixture</a></li></ul>
+      </nav>
+      <div><h3>Visit</h3>
+        <address>
+          [Showroom address]<br />
+          [City, Postcode]<br />
+          <span class="footer__small">By appointment &mdash; hours to be confirmed</span>
+        </address>
+        <p>[hello@example.com]<br />[+00 000 000 0000]</p>
+      </div>
+    </div>
+    <div class="wrap footer__style">
+      <span id="btn-style-label">Button style</span>
+      <div class="style-switch" role="group" aria-labelledby="btn-style-label" id="style-switch">
+        <button type="button" data-btn="clay" aria-pressed="true">Clay</button>
+        <button type="button" data-btn="glass" aria-pressed="false">Glass</button>
+        <button type="button" data-btn="fabric" aria-pressed="false">Fabric</button>
+        <button type="button" data-btn="cut" aria-pressed="false">Cut</button>
+      </div>
+    </div>
+    <div class="wrap footer__base">
+      <span>&copy; <span id="year"></span> <span data-brand>WADIA</span> &middot; Demonstration site</span>
+      <a href="#hero" class="footer__top">Back to the light &uarr;</a>
+    </div>
+  </footer>
+  <noscript><p style="position:fixed;inset:auto 0 0 0;padding:1rem;background:#111;color:#fff;text-align:center">WADIA works best with JavaScript enabled.</p></noscript>
+</body>
+</html>

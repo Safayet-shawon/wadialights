@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.vercel
+test-shots
+lh.json
+*.log
+.env
+.env.*
+!.env.example
+docs
+.github
