@@ -1,14 +1,14 @@
-// Button style option: clay · glass · fabric · cut. Remembered per visitor, applied via <html data-btn>.
-const STYLES = ['clay', 'glass', 'fabric', 'cut'];
+// Button style option: glow · clay · glass · fabric · cut. Remembered per visitor, applied via <html data-btn>.
+const STYLES = ['glow', 'clay', 'glass', 'fabric', 'cut'];
 const KEY = 'wl-btn';
 
 function read() {
   try { const v = localStorage.getItem(KEY); if (STYLES.includes(v)) return v; } catch { /* storage unavailable */ }
-  return 'clay';
+  return 'glow';
 }
 
 export function applyButtonStyle(style) {
-  if (!STYLES.includes(style)) style = 'clay';
+  if (!STYLES.includes(style)) style = 'glow';
   document.documentElement.dataset.btn = style;
   try { localStorage.setItem(KEY, style); } catch { /* ignore */ }
   document.querySelectorAll('#style-switch [data-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.btn === style)));

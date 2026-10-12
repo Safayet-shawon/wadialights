@@ -122,3 +122,13 @@ html[data-btn='cut'] .page .btn:not(.btn--solid):hover::before { background: var
 @media (max-width: 760px) {
   .is-ready .hero::before { background: linear-gradient(0deg, rgba(8, 8, 9, .82) 0%, rgba(8, 8, 9, .5) 42%, rgba(8, 8, 9, .1) 75%, transparent); }
 }
+
+/* ---- hero: the dark room warms up into daylight slowly, never a jump ---- */
+#p-hero { transition: opacity 3.2s ease-in-out, filter 5s ease-in-out; filter: brightness(.5) saturate(.7) contrast(1.05); }
+#p-hero.is-on { filter: brightness(1.22) contrast(1.03) saturate(1.06); }
+
+html[data-btn='glow'] .page .btn:not(.btn--solid), html[data-btn='glow'] .page-inner .btn:not(.btn--solid), html[data-btn='glow'] .inner .btn:not(.btn--solid) {
+  color: #2a2205; background: radial-gradient(120% 160% at 50% 0%, #fffdf2, #fff3c6); border-color: rgba(214, 160, 0, .7);
+  box-shadow: 0 4px 16px rgba(245, 184, 0, .22), inset 0 1px 0 #fff; }
+html[data-btn='glow'] .page .btn:not(.btn--solid):hover, html[data-btn='glow'] .inner .btn:not(.btn--solid):hover { box-shadow: 0 0 24px 3px rgba(255, 196, 50, .5), inset 0 1px 0 #fff; border-color: #f5b800; }
+html[data-btn='glow'] .page .hero .btn:not(.btn--solid) { color: #fff7de; background: radial-gradient(120% 160% at 50% 0%, rgba(255, 214, 90, .28), rgba(30, 24, 8, .6) 70%); border-color: rgba(255, 205, 80, .65); box-shadow: 0 6px 22px rgba(255, 170, 20, .22), inset 0 1px 0 rgba(255, 236, 170, .55); }

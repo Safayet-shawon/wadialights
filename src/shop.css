@@ -9,7 +9,8 @@ body.page-inner { background: var(--paper-1); color: var(--ink); }
 .inner .eyebrow { color: var(--grey); }
 .inner .eyebrow::before { background: var(--brass); }
 .inner h2 em { color: var(--brass-text); }
-.page-head { display: grid; gap: 1rem; max-width: 52rem; margin-bottom: clamp(24px, 4vw, 44px); }
+.page-head { display: grid; gap: 1rem; justify-items: start; margin-bottom: clamp(20px, 3vw, 32px); }
+.page-head > * { max-width: 52rem; margin: 0; }
 .page-title, .page-head h1 { font-size: clamp(2.4rem, 4.4vw + .5rem, 4.6rem); }
 .page-head__note { color: var(--ink-2); max-width: 40rem; }
 .page-loading { color: var(--grey); padding: 3rem 0; }
@@ -26,7 +27,12 @@ body.page-inner .nav { gap: 1rem; }
 body.page-inner .nav__links { margin-right: .4rem; }
 
 /* shop toolbar */
-.shop-controls { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; }
+.shop .cat-tools { display: grid; gap: .9rem; justify-content: stretch; margin: 0 0 1.2rem; }
+.shop-controls { display: flex; flex-wrap: nowrap; gap: .7rem; align-items: center; }
+.shop-controls .search { flex: 1 1 320px; max-width: 420px; }
+.shop-controls .search input { width: 100%; }
+.shop-controls .select { flex: 0 0 auto; }
+.select select { min-width: 190px; }
 .select select { min-height: 48px; padding: .7rem 2.4rem .7rem .95rem; border-radius: 12px; border: 1px solid rgba(20, 20, 22, .22); background-color: #fff; color: var(--ink); font: inherit; font-size: 1rem; appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, #55565a 50%), linear-gradient(135deg, #55565a 50%, transparent 50%); background-position: calc(100% - 20px) 55%, calc(100% - 14px) 55%; background-size: 6px 6px; background-repeat: no-repeat; }
 .select select:focus-visible { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(245, 184, 0, .25); }
@@ -113,7 +119,8 @@ body.page-inner .nav__links { margin-right: .4rem; }
 .fallback { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
 
 /* order tracking */
-.order-wrap { padding-bottom: 90px; max-width: 760px; }
+.order-wrap { padding-bottom: 90px; }
+.order-wrap .order-card, .order-wrap .track { max-width: 760px; }
 .order-card { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 4vw, 40px); display: grid; gap: 1rem; box-shadow: 0 24px 60px -34px rgba(0, 0, 0, .35); }
 .order-thanks { font-size: 1.25rem; font-weight: 600; color: #1f7a3a; margin: 0; }
 .order-code { font-size: clamp(2.2rem, 4vw + .5rem, 3.6rem); letter-spacing: .06em; }
@@ -131,14 +138,14 @@ body.page-inner .nav__links { margin-right: .4rem; }
 .track { display: grid; gap: 1rem; }
 
 /* contact */
-.contact-info { display: grid; gap: 1rem; max-width: 60rem; margin-bottom: clamp(24px, 4vw, 50px); }
+.contact-info { display: grid; gap: 1rem; justify-items: start; margin-bottom: clamp(24px, 4vw, 50px); }
 .contact-cards { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 .contact-cards li { display: grid; gap: .3rem; padding: 1.1rem 1.2rem; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
 .contact-cards b { font-family: var(--display); letter-spacing: .16em; text-transform: uppercase; font-size: .85rem; color: var(--grey); }
 .contact-cards a { color: var(--ink); font-weight: 600; text-underline-offset: 3px; }
 
 /* admin */
-.admin { padding-bottom: 90px; max-width: 1100px; }
+.admin { padding-bottom: 90px; }
 .login { max-width: 460px; display: grid; gap: 1rem; }
 .adm-head { display: flex; justify-content: space-between; gap: 1rem; align-items: center; flex-wrap: wrap; }
 .adm-tabs { display: flex; gap: .5rem; margin: 1rem 0; flex-wrap: wrap; }
@@ -178,6 +185,10 @@ body.page-inner .nav__links { margin-right: .4rem; }
   .cart-line .qty { grid-column: 1 / 2; justify-self: start; }
   .cart-line__total { grid-column: 2 / 3; text-align: right; }
   .steps { font-size: .75rem; }
-  .shop-controls { width: 100%; } .shop-controls .search { flex: 1 1 100%; }
+  .shop-controls { width: 100%; flex-wrap: wrap; } .shop-controls .search { flex: 1 1 100%; max-width: none; } .shop-controls .select, .select select { width: 100%; }
   .pdp__buy .btn { flex: 1 1 100%; }
 }
+
+/* card tidy: buttons share one row, readable description */
+.cat-card .cat-card__actions .btn { padding: .7rem 1.1rem; font-size: .88rem; flex: 1 1 auto; justify-content: center; text-align: center; }
+.cat-card .cat-card__desc { color: var(--ink-2); }

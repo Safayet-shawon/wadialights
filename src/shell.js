@@ -64,7 +64,8 @@ export function mountFooter() {
     <div class="wrap footer__style">
       <span id="btn-style-label">Button style</span>
       <div class="style-switch" role="group" aria-labelledby="btn-style-label" id="style-switch">
-        <button type="button" data-btn="clay" aria-pressed="true">Clay</button>
+        <button type="button" data-btn="glow" aria-pressed="true">Glow</button>
+        <button type="button" data-btn="clay" aria-pressed="false">Clay</button>
         <button type="button" data-btn="glass" aria-pressed="false">Glass</button>
         <button type="button" data-btn="fabric" aria-pressed="false">Fabric</button>
         <button type="button" data-btn="cut" aria-pressed="false">Cut</button>
