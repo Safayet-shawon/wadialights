@@ -1,0 +1,44 @@
+/* Loaded after shop.css on the inner pages, so these win over it. */
+/* ---- UX pass (from the ui-ux-pro-max checklist) ---- */
+.err { color: #b3261e; font-weight: 500; }
+.field input[aria-invalid='true'], .field select[aria-invalid='true'], .field textarea[aria-invalid='true'] { border-color: #b3261e; box-shadow: 0 0 0 3px rgba(179, 38, 30, .14); }
+.err-summary { border-left: 4px solid #b3261e; background: #fbeceb; padding: 1rem 1.2rem; border-radius: 0 6px 6px 0; margin-bottom: 1.2rem; }
+.err-summary h2 { font-size: 1.15rem !important; margin: 0 0 .4rem; color: #8c1d18 !important; }
+.err-summary ul { margin: 0; padding-left: 1.1rem; } .err-summary a { color: #8c1d18; }
+.err-summary:focus { outline: 2px solid #b3261e; outline-offset: 2px; }
+.form-msg[data-kind='error'] { color: #b3261e; }
+
+.flow { list-style: none; margin: 0 0 1.6rem; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; font-family: var(--display); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .86rem; color: var(--grey); }
+.flow li { display: flex; align-items: center; gap: .5rem; }
+.flow li span { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--paper-3); color: var(--ink-2); font-size: .8rem; }
+.flow li.is-done span, .flow li[aria-current='step'] span { background: var(--brass); color: #1a1400; }
+.flow li[aria-current='step'] { color: var(--ink); }
+
+a, button, [role='button'], .chip, .select select, summary { cursor: pointer; }
+.btn, .chip, .qty button, .nav__menu, .nav__cart { min-height: 44px; min-width: 44px; }
+.btn--sm { min-height: 44px; }
+.cat-card__img { display: block; }
+.cat-card h3 a:hover { color: var(--brass-text); }
+.cat-card__price { font-variant-numeric: tabular-nums; }
+
+/* product page on phones: keep the buy actions in reach while reading */
+@media (max-width: 760px) {
+  .pdp__buy { position: sticky; bottom: 0; z-index: 8; margin-inline: calc(var(--gutter) * -1); padding: .8rem var(--gutter) calc(.8rem + env(safe-area-inset-bottom)); background: rgba(245, 245, 242, .96); box-shadow: 0 -14px 24px -18px rgba(var(--shadow-tint), .45); gap: .6rem; }
+  .pdp__buy { flex-wrap: nowrap; align-items: center; }
+  .pdp__buy .qty { flex: 0 0 auto; }
+  .pdp__buy .qty input { width: 38px; }
+  html[data-btn] .pdp__buy .btn { flex: 1 1 0; min-width: 0; padding: .7rem .3rem; font-size: .78rem; letter-spacing: .06em; white-space: nowrap; }
+}
+
+/* design-layer surfaces that shop.css would otherwise override */
+.cat-card, .cart-line, .cart-sum, .order-card, .adm-card, .contact-cards li { background: #fbfbf9; border: 0; border-radius: 6px; box-shadow: none; }
+.cat-card { background: transparent; }
+.order-card, .cart-sum { box-shadow: 0 24px 50px -30px rgba(var(--shadow-tint), .35); }
+.pdp__main { border-radius: 6px; box-shadow: 0 28px 60px -34px rgba(var(--shadow-tint), .45); }
+.page-title, .page-head h1 { font-size: clamp(2.3rem, 3.6vw + .6rem, 4.2rem); }
+.pdp > *, .cart-grid > *, .checkout__grid > * { min-width: 0; }
+@media (max-width: 760px) { .pdp { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 380px) {
+  .pdp__buy { flex-wrap: wrap; }
+  html[data-btn] .pdp__buy .btn { flex: 1 1 120px; }
+}

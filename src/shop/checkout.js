@@ -11,8 +11,13 @@ const phoneOk = (v) => PHONE_BD.test(String(v).replace(/[\s().-]/g, '')) || /^\+
 function setErrors(form, errors = {}) {
   $$('.err', form).forEach((el) => { el.textContent = errors[el.dataset.for] || ''; });
   $$('input, textarea, select', form).forEach((el) => el.setAttribute('aria-invalid', errors[el.name] ? 'true' : 'false'));
-  const first = Object.keys(errors).find((k) => form.elements[k]);
-  if (first) form.elements[first].focus();
+  const keys = Object.keys(errors).filter((k) => form.elements[k]);
+  const box = $('#checkout-errors');
+  if (box) {
+    box.hidden = !keys.length;
+    box.innerHTML = keys.length ? `<h2>Please fix ${keys.length === 1 ? 'one thing' : keys.length + ' things'}</h2><ul>${keys.map((k) => `<li><a href="#" data-field="${esc(k)}">${esc(errors[k])}</a></li>`).join('')}</ul>` : '';
+    if (keys.length) box.focus();
+  }
 }
 
 function orderText(lines, fd, t) {
@@ -33,6 +38,13 @@ export async function initCheckout() {
     <dl class="cart-sum__totals"><div><dt>Subtotal</dt><dd>${esc(subtotalText(t))}</dd></div><div><dt>Delivery</dt><dd>Confirmed by phone</dd></div></dl>
     ${t.unpriced ? '<p class="cart-sum__note">Some items are priced on request. We will call you to confirm the total before dispatch. Nothing is charged online.</p>' : ''}
     <a class="linkbtn" href="/cart">Edit cart</a>`;
+
+  $('#checkout-errors')?.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-field]');
+    if (!a) return;
+    e.preventDefault();
+    form.elements[a.dataset.field]?.focus();
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

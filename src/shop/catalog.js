@@ -55,8 +55,13 @@ async function load({ scroll = false } = {}) {
     if (mine !== seq) return;
     grid().innerHTML = data.items.length
       ? data.items.map((p) => cardHTML(p, esc)).join('')
-      : `<li class="cat-empty">Nothing matches &ldquo;${esc(state.q || CATEGORY_LABELS[state.category] || '')}&rdquo;. Try another word or clear the filter.</li>`;
+      : `<li class="cat-empty">Nothing matches &ldquo;${esc(state.q || CATEGORY_LABELS[state.category] || '')}&rdquo;. Try another word or clear the filter.<br /><button class="btn btn--sm" type="button" id="shop-clear">Show all lights</button></li>`;
     grid().setAttribute('aria-busy', 'false');
+    $('#shop-clear')?.addEventListener('click', () => {
+      state.category = ''; state.q = ''; state.page = 1; $('#shop-search').value = '';
+      $('#shop-filters').querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.cat === '')));
+      load();
+    });
     pager(data);
     if (data.page < data.pages) prefetch(urlFor(state, data.page + 1));
     if (scroll) $('.cat-tools').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });

@@ -11,6 +11,7 @@ import '../features.css';
 import '../light.css';
 import '../shop.css';
 import '../design.css';
+import '../shop-ux.css';
 import { initButtonStyles } from '../buttons.js';
 import { mountHeader, mountFooter } from '../shell.js';
 import { applyButtonStyle } from '../buttons.js';
