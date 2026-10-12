@@ -3,6 +3,8 @@ import '@fontsource/barlow/latin-400.css';
 import '@fontsource/barlow/latin-500.css';
 import '@fontsource/barlow-condensed/latin-600.css';
 import '@fontsource/barlow-condensed/latin-700.css';
+import '@fontsource/playfair-display/latin-600.css';
+import '@fontsource/playfair-display/latin-600-italic.css';
 import '../styles.css';
 import '../wadia.css';
 import '../features.css';

@@ -87,8 +87,10 @@ async function run() {
 
 export function initPlanner() {
   const sel = $('#pl-purpose'), lux = $('#pl-lux');
-  sel.innerHTML = Object.entries(PURPOSES).map(([k, p]) => `<option value="${k}" ${k === 'living' ? 'selected' : ''}>${esc(p.label)} (${p.lux} lux)</option>`).join('');
-  lux.value = PURPOSES.living.lux;
+  const want = new URLSearchParams(location.search).get('room');
+  const start = want && Object.hasOwn(PURPOSES, want) ? want : 'living';
+  sel.innerHTML = Object.entries(PURPOSES).map(([k, p]) => `<option value="${k}" ${k === start ? 'selected' : ''}>${esc(p.label)} (${p.lux} lux)</option>`).join('');
+  lux.value = PURPOSES[start].lux;
   sel.addEventListener('change', () => { if (!luxTouched) lux.value = PURPOSES[sel.value].lux; });
   lux.addEventListener('input', () => { luxTouched = true; });
   const debounced = debounce(run, 220);

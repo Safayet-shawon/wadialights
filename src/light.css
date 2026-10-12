@@ -132,3 +132,55 @@ html[data-btn='glow'] .page .btn:not(.btn--solid), html[data-btn='glow'] .page-i
   box-shadow: 0 4px 16px rgba(245, 184, 0, .22), inset 0 1px 0 #fff; }
 html[data-btn='glow'] .page .btn:not(.btn--solid):hover, html[data-btn='glow'] .inner .btn:not(.btn--solid):hover { box-shadow: 0 0 24px 3px rgba(255, 196, 50, .5), inset 0 1px 0 #fff; border-color: #f5b800; }
 html[data-btn='glow'] .page .hero .btn:not(.btn--solid) { color: #fff7de; background: radial-gradient(120% 160% at 50% 0%, rgba(255, 214, 90, .28), rgba(30, 24, 8, .6) 70%); border-color: rgba(255, 205, 80, .65); box-shadow: 0 6px 22px rgba(255, 170, 20, .22), inset 0 1px 0 rgba(255, 236, 170, .55); }
+
+/* ==========================================================================
+   Audit upgrade: ivory / ink / brass surfaces, editorial serif headings, new story sections.
+   The logo's signal yellow stays for primary actions; ivory, ink and brass carry the rest.
+   ========================================================================== */
+:root { --serif-head: 'Playfair Display', Georgia, 'Times New Roman', serif; --ivory-paper: #f1e9db; --ink-warm: #191817; --brass-soft: #b98a55; --amber-soft: #d9bfa0; --brass-text: #8f6a3a; --paper-1: #f7f2e8; --paper-2: #f1e9db; --line: rgba(25, 24, 23, .14); }
+.hero h1, .page h1, .page h2, .inner h1, .inner h2, .page-title { font-family: var(--serif-head); font-weight: 600; text-transform: none; letter-spacing: -.01em; line-height: 1.08; }
+.hero h1 em, .page h2 em, .inner h2 em { font-style: italic; }
+.hero h1 { font-size: clamp(2.5rem, 4.6vw + 1rem, 5.4rem); max-width: 16ch; }
+.page h2 { font-size: clamp(2.1rem, 3vw + 1rem, 3.6rem); }
+.page-title, .page-head h1 { font-size: clamp(2.3rem, 3.6vw + .6rem, 4rem); }
+.paper, .craft, .featured, .catalogue { background-color: var(--paper-1); }
+.paper { background: var(--paper-1); }
+.transform, .planner { background: var(--paper-2); }
+.featured { background: var(--paper-1); }
+body.page-inner { background: var(--paper-1); }
+.cat-card, .cart-line, .cart-sum, .order-card, .adm-card, .contact-cards li { border-radius: 10px; }
+.cat-card { background: #fffdf8; }
+.cat-card h3, .cart-line__name, .plate h3 { font-family: var(--display); }
+
+.atmos { background: var(--ink-warm); color: var(--ivory-paper); padding: clamp(70px, 10vw, 140px) 0; }
+.page .atmos h2 { color: var(--ivory-paper); } .page .atmos h2 em { color: var(--amber-soft); }
+.page .atmos .eyebrow { color: var(--amber-soft); } .page .atmos .num { color: var(--brass-soft); }
+.page .atmos .section-head__note { color: #cfc6b6; }
+.atmos__grid { list-style: none; margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid rgba(217, 191, 160, .35); }
+.atmos__grid li { border-right: 1px solid rgba(217, 191, 160, .35); }
+.atmos__grid li:last-child { border-right: 0; }
+.atmos__grid a { display: grid; gap: .5rem; padding: 1.6rem 1.4rem 2rem; color: inherit; text-decoration: none; height: 100%; transition: background .35s; }
+.atmos__grid a:hover, .atmos__grid a:focus-visible { background: rgba(185, 138, 85, .16); }
+.atmos__grid b { font-family: var(--serif-head); font-weight: 600; font-size: 1.6rem; color: var(--ivory-paper); }
+.atmos__grid span { color: #cfc6b6; }
+
+.trust { background: var(--paper-2); padding: clamp(70px, 9vw, 130px) 0; border-top: 1px solid var(--line); }
+.trust__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 90px); align-items: start; }
+.trust__list { list-style: none; counter-reset: t; margin: 0; padding: 0; display: grid; gap: 0; }
+.trust__list li { counter-increment: t; display: grid; grid-template-columns: 3rem 1fr; padding: 1.2rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+.trust__list li::before { content: counter(t, decimal-leading-zero); font-family: var(--display); font-weight: 700; color: var(--brass-text); letter-spacing: .1em; }
+.trust__list b { color: var(--ink); }
+
+.make { background: var(--ink-warm); color: var(--ivory-paper); text-align: center; padding: clamp(80px, 11vw, 150px) 0; }
+.page .make h2 { color: var(--ivory-paper); font-size: clamp(2.6rem, 5vw + 1rem, 5rem); } .page .make h2 em { color: var(--amber-soft); }
+.make__inner { display: grid; gap: 1.2rem; justify-items: center; }
+.make__inner p { color: #cfc6b6; margin: 0; }
+.make .cta-row { justify-content: center; margin-top: .8rem; }
+
+@media (max-width: 860px) {
+  .atmos__grid { grid-template-columns: 1fr 1fr; }
+  .atmos__grid li { border-bottom: 1px solid rgba(217, 191, 160, .35); }
+  .atmos__grid li:nth-child(2n) { border-right: 0; }
+  .trust__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) { .atmos__grid { grid-template-columns: 1fr; } .atmos__grid li { border-right: 0; } }
