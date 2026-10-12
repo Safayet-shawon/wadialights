@@ -6,12 +6,14 @@ import '@fontsource/barlow-condensed/latin-700.css';
 import './styles.css';
 import './wadia.css';
 import './features.css';
+import './light.css';
 import gsap from 'gsap';
 import { createVideoExperience } from './videoExperience.js';
 import { playLoader } from './loader.js';
 import * as ui from './ui.js';
 import { initButtonStyles } from './buttons.js';
 import { whenNear } from './util.js';
+import { mountFooter, bindCartBadge } from './shell.js';
 
 const $ = (s) => document.querySelector(s);
 const html = document.documentElement;
@@ -25,6 +27,8 @@ const dom = {
   heroItems: document.querySelectorAll('#hero [data-reveal]'),
 };
 
+mountFooter();
+bindCartBadge();
 initButtonStyles();
 ui.hydrateStatic();
 ui.initSoundToggle();
@@ -40,13 +44,9 @@ function initBelowFold() {
   belowFold = true;
   ui.initScroll(exp);
   ui.initPlates();
-  ui.initCraft();
   ui.initCompare();
   ui.initFeatured();
-  // separate chunks, fetched only when the visitor scrolls near them
-  whenNear($('#catalogue'), () => import('./catalog.js').then((x) => x.initCatalog()), '700px');
-  whenNear($('#planner'), () => import('./planner.js').then((x) => x.initPlanner()), '700px');
-  whenNear($('#quote'), () => import('./forms.js').then((x) => x.initForms()), '900px');
+  whenNear($('#featured-products'), () => import('./shop/featured.js').then((x) => x.initFeaturedStrip()), '800px');
 }
 
 function revealPage() {

@@ -2,7 +2,6 @@
 import { postJSON } from './api.js';
 import { $, $$, esc } from './util.js';
 import { toast } from './toast.js';
-import { goTo } from './ui.js';
 
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
 const attach = { product: null, plan: null };
@@ -98,16 +97,34 @@ function initNews() {
 }
 
 let inited = false;
+const scrollToForm = () => document.getElementById('quote-form')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+
 export function initForms() {
   if (inited) return;
   inited = true;
   initQuote();
   initNews();
+  // something may have been attached on another page (planner, product) before we got here
+  try {
+    const raw = sessionStorage.getItem('wl-attach');
+    if (raw) { sessionStorage.removeItem('wl-attach'); window.dispatchEvent(new CustomEvent('wadia:quote', { detail: JSON.parse(raw) })); }
+  } catch { /* ignore */ }
+  const q = new URLSearchParams(location.search).get('product');
+  if (q && /^[a-z0-9-]{1,80}$/.test(q)) {
+    fetch(`/api/product?slug=${encodeURIComponent(q)}`).then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (d?.product) window.dispatchEvent(new CustomEvent('wadia:quote', { detail: { product: { slug: d.product.slug, name: d.product.name } } }));
+    }).catch(() => {});
+  }
 }
 
-/** open the quote form with something attached; safe to call before the form code has loaded */
+/** open the quote form with something attached; works from any page */
 export function openQuote(detail) {
+  if (!document.getElementById('quote-form')) {
+    try { sessionStorage.setItem('wl-attach', JSON.stringify(detail)); } catch { /* ignore */ }
+    location.href = '/contact';
+    return;
+  }
   initForms();
   window.dispatchEvent(new CustomEvent('wadia:quote', { detail }));
-  goTo('#quote');
+  scrollToForm();
 }

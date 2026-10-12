@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" class="is-ready" id="top">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fafaf8" />
+  <meta name="description" content="Track your WADIA order." />
+  <title>Your order | WADIA</title>
+  <link rel="canonical" href="https://wahdialights.vercel.app/order" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" /><meta property="og:site_name" content="WADIA" />
+  <meta property="og:title" content="Your order | WADIA" /><meta property="og:description" content="Track your WADIA order." />
+  <meta property="og:url" content="https://wahdialights.vercel.app/order" /><meta property="og:image" content="https://wahdialights.vercel.app/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="robots" content="noindex" />
+  <script>try{var b=localStorage.getItem('wl-btn');document.documentElement.dataset.btn=/^(clay|glass|fabric|cut)$/.test(b)?b:'clay'}catch(e){document.documentElement.dataset.btn='clay'}</script>
+  <script type="module" src="/src/pages/order.js"></script>
+</head>
+<body class="page-inner">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="shell-header"></div>
+  <main id="main" class="inner">
+
+    <section class="wrap order-wrap">
+      <div id="order" aria-live="polite"></div>
+      <div id="track" class="track">
+        <h1 class="page-title">Track your order</h1>
+        <p class="page-head__note">Enter your order number and the phone number you ordered with.</p>
+        <form id="track-form" class="quote__form" novalidate>
+          <div class="field-row">
+            <label class="field"><span>Order number</span><input name="code" placeholder="WD-ABC234" maxlength="12" autocapitalize="characters" required /></label>
+            <label class="field"><span>Phone</span><input name="phone" type="tel" inputmode="tel" maxlength="20" required /></label>
+          </div>
+          <div class="quote__actions"><button class="btn btn--solid" type="submit">Find my order</button><p class="form-msg" id="track-msg" role="status"></p></div>
+        </form>
+      </div>
+    </section>
+  </main>
+  <div id="shell-footer"></div>
+</body>
+</html>

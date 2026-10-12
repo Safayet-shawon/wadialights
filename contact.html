@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" class="is-ready" id="top">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fafaf8" />
+  <meta name="description" content="Contact WADIA lighting in Mohakhali DOHS, Dhaka: phone, WhatsApp, Messenger or send a quote request." />
+  <title>Contact | WADIA</title>
+  <link rel="canonical" href="https://wahdialights.vercel.app/contact" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" /><meta property="og:site_name" content="WADIA" />
+  <meta property="og:title" content="Contact | WADIA" /><meta property="og:description" content="Contact WADIA lighting in Mohakhali DOHS, Dhaka: phone, WhatsApp, Messenger or send a quote request." />
+  <meta property="og:url" content="https://wahdialights.vercel.app/contact" /><meta property="og:image" content="https://wahdialights.vercel.app/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <script>try{var b=localStorage.getItem('wl-btn');document.documentElement.dataset.btn=/^(clay|glass|fabric|cut)$/.test(b)?b:'clay'}catch(e){document.documentElement.dataset.btn='clay'}</script>
+  <script type="module" src="/src/pages/contact.js"></script>
+</head>
+<body class="page-inner">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="shell-header"></div>
+  <main id="main" class="inner">
+
+    <section class="wrap contact-info">
+      <p class="eyebrow">Visit &amp; contact</p>
+      <h1 class="page-title">Talk to WADIA</h1>
+      <p class="page-head__note">We manufacture and import all kinds of lights and home automation products. Call, message or visit us in Dhaka.</p>
+      <ul class="contact-cards">
+        <li><b>Address</b><span id="c-address"></span><a id="c-map" rel="noopener">Open in maps</a></li>
+        <li><b>Phone</b><a id="c-phone"></a><a id="c-wa" rel="noopener">WhatsApp</a></li>
+        <li><b>Online</b><a id="c-fb" rel="noopener">Facebook page</a><a id="c-ms" rel="noopener">Messenger</a></li>
+      </ul>
+    </section>
+
+<section id="quote" class="quote" aria-labelledby="quote-title">
+        <div class="wrap quote__grid">
+          <header class="section-head section-head--light">
+            <p class="eyebrow"><span class="num">V</span> Contact</p>
+            <h2 id="quote-title">Tell us about <em>your room.</em></h2>
+            <p class="section-head__note">Send a request and we will reply by email. If you used the planner, your plan travels with the message.</p>
+            <form class="news" id="news-form" novalidate>
+              <label class="field"><span>Occasional news, no spam</span>
+                <span class="news__row"><input type="email" name="email" placeholder="you@example.com" autocomplete="email" required /><button class="btn btn--sm" type="submit">Subscribe</button></span>
+              </label>
+              <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <p class="form-msg" id="news-msg" role="status"></p>
+            </form>
+          </header>
+          <form class="quote__form" id="quote-form" novalidate>
+            <div class="field-row">
+              <label class="field"><span>Name</span><input name="name" autocomplete="name" maxlength="120" required /><small class="err" data-for="name"></small></label>
+              <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254" required /><small class="err" data-for="email"></small></label>
+            </div>
+            <div class="field-row">
+              <label class="field"><span>Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" /><small class="err" data-for="phone"></small></label>
+              <label class="field"><span>Room</span>
+                <select name="room"><option value="">Choose a room</option><option>Living room</option><option>Bedroom</option><option>Kitchen</option><option>Dining room</option><option>Hallway</option><option>Bathroom</option><option>Home office</option><option>Showroom / shop</option><option>Other</option></select>
+              </label>
+            </div>
+            <div class="chips-row" id="quote-attach" hidden></div>
+            <label class="field"><span>How can we help?</span><textarea name="message" rows="5" maxlength="4000" required></textarea><small class="err" data-for="message"></small></label>
+            <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div class="quote__actions">
+              <button class="btn btn--solid" type="submit" id="quote-submit">Send request</button>
+              <p class="form-msg" id="quote-msg" role="status"></p>
+            </div>
+          </form>
+        </div>
+      </section>
+  </main>
+  <div id="shell-footer"></div>
+</body>
+</html>

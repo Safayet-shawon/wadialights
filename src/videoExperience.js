@@ -20,15 +20,16 @@ export async function createVideoExperience({ dom, onState }) {
   const sfx = suffix();
   const k = knob[sfx ? 'p' : 'l'];
   const stage = document.getElementById('video-stage');
-  const vPull = document.getElementById('v-pull'), vIntro = document.getElementById('v-intro'), vHero = document.getElementById('v-hero');
-  for (const v of [vPull, vIntro, vHero]) { v.muted = true; v.playsInline = true; }
+  const vPull = document.getElementById('v-pull'), vIntro = document.getElementById('v-intro'), pHero = document.getElementById('p-hero');
+  for (const v of [vPull, vIntro]) { v.muted = true; v.playsInline = true; }
 
   // only the tiny pull clip is fetched up front; the 2 MB intro and hero are fetched when they are about to be needed
   const fetchClip = (video, name) => { if (video.dataset.loaded) return; video.preload = 'auto'; setSources(video, name); };
   const loadIntro = () => { if (!reduced) fetchClip(vIntro, `intro${sfx}`); };
-  const loadHero = () => fetchClip(vHero, 'hero' + sfx);
+  const loadHero = () => { if (!pHero.getAttribute('src')) pHero.src = `/photos/hero${sfx}.webp`; };
   setSources(vPull, `intro-pull${sfx}`);
   setTimeout(loadIntro, 2500);          // idle time while the visitor reads the invitation
+  setTimeout(loadHero, 4000);
   // A media *error* sends us to the live WebGL scene. Merely not having preloaded yet (iOS never preloads
   // until the first touch) is not a failure, so don't wait longer than a moment for it.
   await Promise.race([whenReady(vPull, 20000), new Promise((r) => setTimeout(r, 3000))]);
@@ -184,11 +185,11 @@ export async function createVideoExperience({ dom, onState }) {
     finished = true;
     reveal(instant);
     loadHero();
-    vHero.currentTime = 0;
-    if (!reduced) { try { await vHero.play(); } catch { /* poster only */ } }
-    vHero.classList.add('is-top', 'is-on');
-    vIntro.classList.remove('is-on'); vPull.classList.remove('is-on');
-    setTimeout(() => { vIntro.pause(); vPull.pause(); }, 700);
+    if (!(pHero.complete && pHero.naturalWidth)) {
+      await new Promise((res) => { pHero.addEventListener('load', res, { once: true }); pHero.addEventListener('error', res, { once: true }); setTimeout(res, 2500); });
+    }
+    pHero.classList.add('is-on');                       // the 3D room develops into the photograph
+    setTimeout(() => { vIntro.pause(); vPull.pause(); vIntro.classList.remove('is-on'); vPull.classList.remove('is-on'); }, reduced ? 100 : 1600);
     html.classList.remove('is-intro', 'is-locked');
     html.classList.add('is-ready');
     gsap.set(dom.intro, { display: 'none' });
@@ -214,19 +215,14 @@ export async function createVideoExperience({ dom, onState }) {
   /* ---------- page integration ---------- */
   let heroInView = true;
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { vHero.pause(); if (introStarted && !finished) vIntro.pause(); }
-    else if (finished && heroInView && !reduced) vHero.play().catch(() => {});
+    if (document.hidden) { if (introStarted && !finished) vIntro.pause(); }
     else if (introStarted && !finished) vIntro.play().catch(() => {});
   });
 
   return {
     get state() { return state; },
     skip,
-    setHeroInView(v) {
-      heroInView = v;
-      if (!finished || reduced) return;
-      if (v) vHero.play().catch(() => {}); else vHero.pause();
-    },
+    setHeroInView(v) { heroInView = v; },
     /** scroll-linked dolly: the whole picture eases in as the hero leaves */
     setPush(p) { stage.style.transform = `translate3d(0, ${(-p * 40).toFixed(1)}px, 0) scale(${(1 + p * 0.1).toFixed(4)})`; },
   };

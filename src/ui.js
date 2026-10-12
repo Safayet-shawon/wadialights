@@ -1,9 +1,14 @@
-// Page-level behaviour: scrolling, section reveals, and every pre-rendered film below the hero.
+// Page-level behaviour: scrolling, section reveals, and the photographs below the hero.
 import gsap from 'gsap';
 import { BRAND, PRODUCTS } from './content.js';
 import { isSoundOn, setSound } from './audio.js';
-import { lazyPlay, setSources, reducedMotion, suffix, isPortrait } from './media.js';
+import { reducedMotion } from './media.js';
 
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const reducedMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+let lenis = null;
 let ST = null;
 /** ScrollTrigger is only needed once the intro is over, so it is fetched then (separate chunk) */
 async function loadST() {
@@ -14,36 +19,27 @@ async function loadST() {
   return ST;
 }
 
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const reducedMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-let lenis = null;
-
 /* ----------------------------------------------------------- static content */
 export function hydrateStatic() {
   $$('[data-brand]').forEach((el) => { el.textContent = BRAND.name; });
-  document.title = `${BRAND.name} — The Art of Illumination`;
-  $('#year').textContent = new Date().getFullYear();
+  document.title = 'WADIA — Lights & Automation';
 
   // only the table lamp has an inspector, so only its plate links to it
   $('#plates').innerHTML = PRODUCTS.map((p, i) => `
     <li class="plate plate--${i + 1}">
       <figure>
         <div class="plate__frame">
-          <video class="plate__video" data-clip="lamp-${i + 1}" muted loop playsinline preload="none" aria-label="${p.title}: a slow film of the ${p.inspect.toLowerCase().replace('the ', '')}, light gently rising."></video>
-          <span class="plate__wait">Loading film&hellip;</span>
+          <img class="plate__img" src="/photos/plate-${i + 1}.webp" alt="${p.title}: ${p.inspect.toLowerCase().replace('the ', '')} lit in a bright room." width="1080" height="1350" loading="lazy" decoding="async" />
         </div>
         <figcaption>
           <p class="plate__no">${p.plate}</p>
           <h3>${p.title}</h3>
           <p class="plate__blurb">${p.blurb}</p>
-          ${p.kind === 'table' ? '<a class="link" href="#featured">Inspect the table lamp <span aria-hidden="true">&rarr;</span></a>' : ''}
+          <a class="link" href="/shop?category=${p.kind}">Shop ${p.title.toLowerCase()} <span aria-hidden="true">&rarr;</span></a>
         </figcaption>
       </figure>
     </li>`).join('');
 
-  $('#footer-collection').innerHTML = PRODUCTS.map((p) => `<li><a href="#collection">${p.title}</a></li>`).join('');
 }
 
 /* ------------------------------------------------------------- sound toggle */
@@ -73,16 +69,13 @@ export async function startScrolling() {
   ScrollTrigger.refresh();
 }
 
-export function goTo(hash) {
-  scrollToTarget(hash);
-}
-
 function scrollToTarget(hash) {
   const el = $(hash);
   if (!el) return;
   if (lenis) lenis.scrollTo(el, { offset: hash === '#hero' ? 0 : -10, duration: 1.4 });
   else el.scrollIntoView({ behavior: reducedMQ.matches ? 'auto' : 'smooth', block: 'start' });
 }
+export const goTo = scrollToTarget;
 
 export function initAnchors() {
   document.addEventListener('click', (e) => {
@@ -134,33 +127,19 @@ export async function initScroll(exp) {
 
 /* -------------------------------------------------------------------- plates */
 export function initPlates() {
-  $$('.plate__video').forEach((v) => {
-    const frame = v.closest('.plate__frame');
-    v.addEventListener('loadeddata', () => frame.classList.add('is-ready'), { once: true });
-    v.addEventListener('error', () => frame.classList.add('is-failed'), { once: true });
-    lazyPlay(v, v.dataset.clip, { margin: '400px' });
-    if (reducedMotion()) frame.classList.add('is-ready');       // poster only
-  });
-}
-
-/* --------------------------------------------------------------------- craft */
-export function initCraft() {
-  $$('.specimen__video').forEach((v) => {
-    const spec = v.closest('.specimen');
-    v.addEventListener('playing', () => spec.classList.add('has-video'), { once: true });
-    lazyPlay(v, v.dataset.clip, { margin: '200px' });
-    if (reducedMotion()) spec.classList.add('has-video');
+  $$('.plate__img').forEach((img) => {
+    const frame = img.closest('.plate__frame');
+    const ready = () => frame.classList.add('is-ready');
+    if (img.complete && img.naturalWidth) ready(); else { img.addEventListener('load', ready, { once: true }); img.addEventListener('error', ready, { once: true }); }
   });
 }
 
 /* -------------------------------------------------------- before / after light */
-// A draggable wipe between two films of the same camera move: lit underneath, unlit clipped on top.
+// A draggable wipe between two photographs of the same room: lit underneath, unlit clipped on top.
 export function initCompare() {
   const stage = $('#compare-stage'), dark = $('#img-dark'), lit = $('#img-lit');
   const range = $('#dimmer'), out = $('#dimmer-out'), wait = $('#compare-wait');
   const handle = $('#compare-handle'), edge = $('#compare-edge');
-  const sfx = suffix();
-  if (isPortrait()) stage.style.aspectRatio = '4 / 5';
 
   handle.setAttribute('role', 'slider');
   handle.setAttribute('aria-valuemin', '0'); handle.setAttribute('aria-valuemax', '100');
@@ -206,107 +185,32 @@ export function initCompare() {
   $('#lights-on').addEventListener('click', () => tweenTo(100));
   $('#lights-off').addEventListener('click', () => tweenTo(0));
 
-  // both films share one camera move: keep their clocks locked together
-  let raf = 0;
-  const sync = () => {
-    raf = 0;
-    if (!lit.paused && Math.abs(dark.currentTime - lit.currentTime) > 0.06) dark.currentTime = lit.currentTime;
-    if (!lit.paused) raf = requestAnimationFrame(sync);
-  };
   const ready = () => wait.classList.add('is-hidden');
-  lit.addEventListener('loadeddata', ready, { once: true });
-  lit.addEventListener('playing', () => { if (!raf) raf = requestAnimationFrame(sync); });
-  lit.addEventListener('error', () => { wait.textContent = 'The comparison film could not be loaded.'; }, { once: true });
-
-  let loaded = false, hinted = false;
-  new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) {
-      if (!loaded) { loaded = true; setSources(dark, `room-unlit${sfx}`); setSources(lit, `room-lit${sfx}`); }
-      if (!reducedMotion()) {
-        dark.play().catch(() => {}); lit.play().catch(() => {});
-        if (!hinted) { hinted = true; paint(0); gsap.to({ v: 0 }, { v: 60, duration: 1.6, delay: 0.5, ease: 'power2.inOut', onUpdate() { if (!dragging) paint(this.targets()[0].v); } }); }
-      } else ready();
-    } else { dark.pause(); lit.pause(); }
-  }, { rootMargin: '300px' }).observe($('#light'));
-}
-
-/* ----------------------------------------------------------------- turntable */
-// The turntable clips are scrubbed constantly, so they are fetched whole and played from memory:
-// every seek is then local (no range requests, no stalls).
-async function loadWhole(video, name) {
-  const ext = video.canPlayType('video/webm; codecs="vp9"') ? 'webm' : 'mp4';
-  video.poster = `/videos/${name}.webp`;
-  try {
-    const r = await fetch(`/videos/${name}.${ext}`);
-    if (!r.ok) throw new Error(r.statusText);
-    video.src = URL.createObjectURL(await r.blob());
-    video.load();
-  } catch { setSources(video, name); }
-}
-// table-lamp-on / table-lamp-off share one all-intra 360° camera move: dragging scrubs currentTime.
-export function initFeatured() {
-  const viewer = $('#viewer'), on = $('#v-table-on'), off = $('#v-table-off'), hint = $('#viewer-hint');
-  const btn = $('#toggle-light');
-  let loaded = false, visible = false, raf = 0, last = 0;
-  let t = 0, vel = 0, dragging = false, idleAt = 0, lit = true;
-  const DUR = 12;
-
-  const setT = (n) => {
-    t = ((n % DUR) + DUR) % DUR;
-    for (const v of [on, off]) if (v.readyState >= 1 && Math.abs(v.currentTime - t) > 1 / 90) v.currentTime = t;
-  };
-
-  function loop(now) {
-    raf = 0;
-    if (!visible) return;
-    const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
-    if (!dragging) {
-      vel *= Math.pow(0.04, dt);                                  // inertia
-      let step = vel * dt;
-      if (!reducedMQ.matches && now > idleAt) step += dt * 0.8;   // slow idle turn after the visitor lets go
-      if (Math.abs(step) > 1e-5) setT(t + step);
-    }
-    raf = requestAnimationFrame(loop);
+  let n = 0;
+  for (const img of [dark, lit]) {
+    const done = () => { if (++n === 2) ready(); };
+    if (img.complete && img.naturalWidth) done(); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', () => { wait.textContent = 'The comparison could not be loaded.'; }, { once: true }); }
   }
-  const wake = () => { if (!raf && visible) { last = performance.now(); raf = requestAnimationFrame(loop); } };
 
-  viewer.addEventListener('pointerdown', (e) => {
-    dragging = true; vel = 0; hint.classList.remove('is-on');
-    viewer.setPointerCapture(e.pointerId);
-    viewer.dataset.x = e.clientX;
-  });
-  viewer.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    const dx = e.clientX - Number(viewer.dataset.x);
-    viewer.dataset.x = e.clientX;
-    const dt = (dx / viewer.clientWidth) * DUR * 1.1;             // one viewer-width ≈ one revolution
-    setT(t - dt);
-    vel = vel * 0.6 + (-dt / 0.016) * 0.4;
-  });
-  const release = () => { dragging = false; idleAt = performance.now() + 3000; wake(); };
-  viewer.addEventListener('pointerup', release);
-  viewer.addEventListener('pointercancel', release);
-  // keyboard: arrow keys turn it
-  viewer.tabIndex = 0;
-  viewer.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { setT(t - 0.5); idleAt = performance.now() + 3000; }
-    if (e.key === 'ArrowRight') { setT(t + 0.5); idleAt = performance.now() + 3000; }
-  });
+  // sweep once when it scrolls into view, as a hint that it can be dragged
+  let hinted = false;
+  new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting || hinted || reducedMotion()) return;
+    hinted = true;
+    paint(0);
+    gsap.to({ v: 0 }, { v: 60, duration: 1.6, delay: 0.4, ease: 'power2.inOut', onUpdate() { if (!dragging) paint(this.targets()[0].v); } });
+  }, { threshold: 0.4 }).observe($('#compare-stage'));
+}
 
+/* ------------------------------------------------------------- featured lamp */
+// Two photographs of the same lamp: lit and unlit. The switch crossfades between them.
+export function initFeatured() {
+  const on = $('#v-table-on'), btn = $('#toggle-light');
+  let lit = true;
   btn.addEventListener('click', () => {
     lit = !lit;
     btn.setAttribute('aria-pressed', String(lit));
     btn.textContent = lit ? 'Switch off' : 'Switch on';
-    gsap.to(on, { opacity: lit ? 1 : 0, duration: reducedMQ.matches ? 0.01 : 0.7, ease: 'power2.inOut' });
+    gsap.to(on, { opacity: lit ? 1 : 0, duration: reducedMQ.matches ? 0.01 : 0.8, ease: 'power2.inOut' });
   });
-
-  new IntersectionObserver(([e]) => {
-    visible = e.isIntersecting;
-    if (visible && !loaded) {
-      loaded = true;
-      loadWhole(off, 'table-lamp-off'); loadWhole(on, 'table-lamp-on');
-      on.addEventListener('loadeddata', () => { hint.classList.add('is-on'); idleAt = performance.now() + 1200; }, { once: true });
-    }
-    if (visible) wake();
-  }, { rootMargin: '300px' }).observe(viewer);
 }

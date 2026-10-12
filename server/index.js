@@ -6,7 +6,8 @@ import { pathToFileURL } from 'node:url';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { brotliCompress, gzip } from 'node:zlib';
 import { promisify } from 'node:util';
-import { ROUTES, METHOD_NOT_ALLOWED } from './lib/routes.js';
+import { dispatch } from './lib/routes.js';
+import { pageFor } from './lib/pages.js';
 import { closePool } from './lib/db.js';
 
 const br = promisify(brotliCompress), gz = promisify(gzip);
@@ -58,19 +59,14 @@ async function send(req, res, status, buf, headers) {
 
 async function handleApi(req, res, url) {
   const name = url.pathname.replace(/^\/api\//, '').replace(/\/$/, '');
-  const route = Object.hasOwn(ROUTES, name) ? ROUTES[name] : null;
-  if (!route) return send(req, res, 404, Buffer.from('{"error":"not_found"}'), { ...SECURITY, 'Content-Type': 'application/json' });
-  let out;
-  if (req.method !== route.method && !(route.method === 'GET' && req.method === 'HEAD')) {
-    out = METHOD_NOT_ALLOWED(route.method);
-  } else {
-    let body;
-    try { body = route.method === 'POST' ? await readBody(req) : undefined; } catch (e) {
+  let body;
+  if (req.method === 'POST' || req.method === 'PATCH') {
+    try { body = await readBody(req); } catch (e) {
       return send(req, res, e.status || 400, Buffer.from(JSON.stringify({ error: 'bad_request' })), { ...SECURITY, 'Content-Type': 'application/json' });
     }
-    const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '';
-    out = await route.run({ query: Object.fromEntries(url.searchParams), body, ip });
   }
+  const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '';
+  const out = await dispatch(name, { method: req.method, query: Object.fromEntries(url.searchParams), body, ip, headers: req.headers });
   return send(req, res, out.status, Buffer.from(JSON.stringify(out.body)), { ...SECURITY, ...out.headers, 'Content-Type': 'application/json; charset=utf-8' });
 }
 
@@ -78,7 +74,10 @@ function serveStatic(req, res, url) {
   let rel = decodeURIComponent(url.pathname);
   let file = normalize(join(DIST, rel));
   if (file !== DIST && !file.startsWith(DIST + sep)) return send(req, res, 403, Buffer.from('forbidden'), { ...SECURITY, 'Content-Type': 'text/plain' });
-  if (!existsSync(file) || statSync(file).isDirectory()) file = join(DIST, 'index.html');
+  let status = 200;
+  const page = pageFor(url.pathname);
+  if (page) file = join(DIST, page);
+  else if (!existsSync(file) || statSync(file).isDirectory()) { file = join(DIST, '404.html'); status = 404; if (!existsSync(file)) file = join(DIST, 'index.html'); }
   const ext = extname(file);
   const st = statSync(file);
   const hashed = /\/assets\//.test(file.replace(/\\/g, '/'));
@@ -101,7 +100,7 @@ function serveStatic(req, res, url) {
     return req.method === 'HEAD' ? res.end() : createReadStream(file, { start, end }).pipe(res);
   }
   if (COMPRESSIBLE.has(ext)) {
-    return import('node:fs/promises').then(({ readFile }) => readFile(file)).then((buf) => send(req, res, 200, buf, headers));
+    return import('node:fs/promises').then(({ readFile }) => readFile(file)).then((buf) => send(req, res, status, buf, headers));
   }
   headers['Content-Length'] = st.size;
   res.writeHead(200, headers);

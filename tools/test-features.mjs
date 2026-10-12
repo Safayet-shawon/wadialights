@@ -135,7 +135,7 @@ await shot('5-wipe');
 await goto('#featured', 40);
 await sleep(1500);
 const op0 = await page.$eval('#v-table-on', (e) => getComputedStyle(e).opacity);
-await page.click('#toggle-light'); await sleep(1100);
+await page.click('#toggle-light'); await sleep(1800);
 const op1 = await page.$eval('#v-table-on', (e) => getComputedStyle(e).opacity);
 check('Switch off crossfades the turntable', Number(op0) > 0.9 && Number(op1) < 0.1, `${op0} → ${op1}`);
 

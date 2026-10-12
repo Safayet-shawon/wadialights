@@ -66,8 +66,6 @@ button { font: inherit; color: inherit; }
 .vs.is-on { opacity: 1; }
 #v-pull { z-index: 3; }
 #v-intro { z-index: 2; }
-#v-hero { z-index: 1; transition: opacity .6s ease; }
-#v-hero.is-top { z-index: 4; }
 /* loader: the WADIA bulb draws itself, then glows (pure CSS, so it animates even while the page is busy) */
 .loader {
   position: fixed; inset: 0; z-index: 60; display: grid; place-content: center; justify-items: center; text-align: center;

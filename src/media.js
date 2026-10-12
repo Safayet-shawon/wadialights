@@ -25,25 +25,3 @@ export function whenReady(video, timeoutMs = 10000) {
     video.addEventListener('error', () => { clearTimeout(t); reject(new Error(`video error: ${video.dataset.loaded}`)); }, { once: true });
   });
 }
-
-/**
- * Load a video's sources only when it is near the viewport, play only while visible.
- * Under prefers-reduced-motion it stays a poster.
- */
-export function lazyPlay(video, name, { margin = '300px', onVisible } = {}) {
-  video.muted = true; video.playsInline = true;
-  video.poster = `/videos/${name}.webp`;
-  if (reducedMotion()) return () => {};
-  const io = new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) {
-      setSources(video, name);
-      onVisible?.(true);
-      const p = video.play(); if (p) p.catch(() => {});
-    } else {
-      onVisible?.(false);
-      video.pause();
-    }
-  }, { rootMargin: margin });
-  io.observe(video);
-  return () => io.disconnect();
-}

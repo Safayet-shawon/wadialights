@@ -89,7 +89,7 @@ test('static: compression, immutable assets, SPA fallback, ranges, traversal blo
   assert.equal(html.status, 200); assert.equal(html.headers.get('content-encoding'), 'br'); assert.equal(html.headers.get('cache-control'), 'no-cache');
   const js = await fetch(`${base}/assets/app-abc.js`);
   assert.match(js.headers.get('cache-control'), /immutable/);
-  const spa = await fetch(`${base}/some/route`); assert.equal(spa.status, 200);
+  const spa = await fetch(`${base}/some/route`); assert.equal(spa.status, 404);
   const rng = await fetch(`${base}/videos/clip.mp4`, { headers: { range: 'bytes=100-199' } });
   assert.equal(rng.status, 206); assert.equal(rng.headers.get('content-range'), 'bytes 100-199/5000'); assert.equal((await rng.arrayBuffer()).byteLength, 100);
   const trav = await fetch(`${base}/..%2f..%2fpackage.json`);
@@ -101,4 +101,18 @@ test('static: compression, immutable assets, SPA fallback, ranges, traversal blo
 test('GET /api/health reports the database as not configured', async () => {
   const j = await (await fetch(`${base}/api/health`)).json();
   assert.equal(j.ok, true); assert.equal(j.db, 'not_configured');
+});
+
+test('product detail, orders and admin without a database', async () => {
+  const one = await fetch(`${base}/api/product?slug=${(await (await fetch(`${base}/api/products?limit=1`)).json()).items[0].slug}`);
+  assert.equal(one.status, 200);
+  const p = (await one.json()).product;
+  assert.ok(Array.isArray(p.images) && p.images.length && 'price_bdt' in p && 'stock' in p);
+  assert.equal((await fetch(`${base}/api/product?slug=nope-nope`)).status, 404);
+  const bad = await post('/api/orders', { name: '', phone: '1', items: [] });
+  assert.equal(bad.status, 422);
+  const ok = await post('/api/orders', { name: 'Asha', phone: '01701777913', address: 'House 1, Road 2, Dhaka', city: 'Dhaka', items: [{ slug: p.slug, qty: 1 }] }, { 'x-forwarded-for': '4.4.4.4' });
+  assert.equal(ok.status, 503);
+  const adm = await fetch(`${base}/api/admin-orders`);
+  assert.ok([401, 503].includes(adm.status));
 });

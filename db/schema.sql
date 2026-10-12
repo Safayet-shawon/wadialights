@@ -56,3 +56,37 @@ create unique index if not exists subscribers_email_uq on subscribers (lower(ema
 alter table products    enable row level security;
 alter table inquiries   enable row level security;
 alter table subscribers enable row level security;
+
+-- ───────────────────────── shop: pricing, stock, images ─────────────────────────
+alter table products add column if not exists price_bdt integer check (price_bdt is null or price_bdt >= 0);   -- null = "price on request"
+alter table products add column if not exists stock    integer check (stock is null or stock >= 0);            -- null = made to order / not tracked
+alter table products add column if not exists images   text[] not null default '{}';
+alter table products add column if not exists active   boolean not null default true;
+alter table products add column if not exists featured boolean not null default false;
+create index if not exists products_active_idx on products (active, category, sort);
+
+-- ───────────────────────── orders ─────────────────────────
+create table if not exists orders (
+  id             uuid primary key default gen_random_uuid(),
+  code           text not null unique,                                   -- customer-facing, e.g. WD-7K2M9Q
+  token_hash     text not null,                                          -- sha-256 of the private tracking token
+  customer_name  text not null check (char_length(customer_name) between 1 and 120),
+  phone          text not null check (char_length(phone) between 6 and 20),
+  email          text check (email is null or char_length(email) <= 254),
+  address        text not null check (char_length(address) between 5 and 400),
+  area           text check (area is null or char_length(area) <= 80),
+  city           text not null check (char_length(city) between 1 and 80),
+  notes          text check (notes is null or char_length(notes) <= 1000),
+  payment_method text not null default 'cod' check (payment_method in ('cod', 'arrange')),
+  items          jsonb not null,                                         -- snapshot: slug, name, qty, unit price at order time
+  subtotal_bdt   integer,                                                -- null when any item is "price on request"
+  status         text not null default 'received' check (status in ('received', 'confirmed', 'shipped', 'delivered', 'cancelled')),
+  admin_note     text,
+  ip_hash        text,
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
+create index if not exists orders_status_created_idx on orders (status, created_at desc);
+create index if not exists orders_created_idx on orders (created_at desc);
+create index if not exists orders_phone_idx on orders (phone);
+alter table orders enable row level security;

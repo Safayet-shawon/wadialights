@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" class="is-ready" id="top">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fafaf8" />
+  <meta name="description" content="Pendant lights, wall sconces, table lamps, floor lamps and ceiling fixtures from WADIA, Dhaka. Order online." />
+  <title>Shop lights | WADIA</title>
+  <link rel="canonical" href="https://wahdialights.vercel.app/shop" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" /><meta property="og:site_name" content="WADIA" />
+  <meta property="og:title" content="Shop lights | WADIA" /><meta property="og:description" content="Pendant lights, wall sconces, table lamps, floor lamps and ceiling fixtures from WADIA, Dhaka. Order online." />
+  <meta property="og:url" content="https://wahdialights.vercel.app/shop" /><meta property="og:image" content="https://wahdialights.vercel.app/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <script>try{var b=localStorage.getItem('wl-btn');document.documentElement.dataset.btn=/^(clay|glass|fabric|cut)$/.test(b)?b:'clay'}catch(e){document.documentElement.dataset.btn='clay'}</script>
+  <script type="module" src="/src/pages/shop.js"></script>
+</head>
+<body class="page-inner">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="shell-header"></div>
+  <main id="main" class="inner">
+
+    <section class="page-head wrap">
+      <p class="eyebrow">Shop</p>
+      <h1>Lights for every room</h1>
+      <p class="page-head__note">Sample listings: the shop confirms the exact model, finish, price and availability by phone before anything is dispatched. Nothing is charged online.</p>
+    </section>
+    <section class="wrap shop" aria-label="Products">
+      <div class="cat-tools">
+        <div class="filters" id="shop-filters" role="group" aria-label="Filter by type"></div>
+        <div class="shop-controls">
+          <label class="search"><span class="sr-only">Search the shop</span><input type="search" id="shop-search" placeholder="Search lights" maxlength="80" autocomplete="off" /></label>
+          <label class="select"><span class="sr-only">Sort products</span>
+            <select id="shop-sort"><option value="default">Recommended</option><option value="featured">Featured first</option><option value="name">Name A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select>
+          </label>
+        </div>
+      </div>
+      <p class="shop-count" id="shop-count" aria-live="polite"></p>
+      <ul class="cat-grid" id="shop-grid" aria-live="polite" aria-busy="true"></ul>
+      <nav class="pager" id="shop-pager" aria-label="Shop pages"></nav>
+    </section>
+  </main>
+  <div id="shell-footer"></div>
+</body>
+</html>

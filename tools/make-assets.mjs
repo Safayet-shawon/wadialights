@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url';
 
 const CHROME = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
 const font = (w) => pathToFileURL(resolve(`node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-${w}-normal.woff2`)).href;
-const hero = pathToFileURL(resolve('public/videos/hero.webp')).href;
+const hero = pathToFileURL(resolve('public/photos/hero.webp')).href;
 
 const BULB = (c = '#F5B800', sw = 6) => `<svg viewBox="0 0 80 124" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M62 18C34 2 6 22 12 50c3 14 14 20 16 32h22c2-12 12-18 16-32"/><path d="M46 30C32 24 24 38 30 48c4 7 10 8 10 18"/><path d="M28 92l28-6"/><path d="M30 102l26-6"/><path d="M34 112l18-4"/></g></svg>`;
 

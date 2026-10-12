@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Light theme for everything below the hero: white and soft greys with the logo's signal yellow.
+   (The opening and the hero stay cinematic; the rest of the page is bright and welcoming.)
+   Loaded last, so it wins where it overlaps.
+   ========================================================================== */
+:root { --brass-text: #a97a00; --ink-2: #4a4a4d; --line: rgba(20, 20, 22, .12); --paper-1: #fafaf8; --paper-2: #f1f1ee; }
+
+.page { background: var(--paper-1); color: var(--ink); box-shadow: 0 -18px 50px rgba(0, 0, 0, .28); }
+.page h1, .page h2, .page h3 { color: var(--ink); }
+.page h2 em, .page .hero h1 em { color: var(--brass-text); }
+.page .eyebrow { color: var(--grey); }
+.page .eyebrow::before { background: var(--brass); }
+.page .num { color: var(--brass-text); }
+.page .section-head__note, .page .craft__intro, .page .featured__desc, .page .plate__blurb, .page .compare__note, .page .planner__fine, .page .cat-card__desc { color: var(--ink-2); opacity: 1; }
+.page .placeholder-tag { color: var(--grey); border-color: rgba(169, 122, 0, .55); }
+
+/* section backgrounds */
+.paper { background: radial-gradient(ellipse at 50% 0%, #fff 0%, transparent 60%), var(--noise), #f1f1ee; background-size: auto, 180px, auto; }
+.catalogue { background: var(--paper-1); border-top: 1px solid var(--line); }
+.planner { background: var(--paper-2); border-top: 1px solid var(--line); }
+.craft { background: var(--paper-1); border-top: 1px solid var(--line); }
+.transform { background: var(--paper-2); border-top: 1px solid var(--line); }
+.featured { background: radial-gradient(ellipse at 80% 30%, #fff3c4 0%, transparent 60%), #fbf8ec; border-top: 1px solid var(--line); }
+.quote { background: #fff; border-top: 1px solid var(--line); }
+
+/* craft */
+.craft__lead .craft__intro { color: var(--ink-2); }
+.chapter { border-bottom-color: var(--line); }
+.chapter p { color: var(--ink-2); }
+.chapter .chapter__label { color: var(--grey); }
+.craft__quote p { color: var(--ink); }
+.specimen { filter: grayscale(.6) brightness(.95); box-shadow: 0 0 0 1px rgba(20, 20, 22, .2), 0 0 0 7px var(--paper-1), 0 0 0 8px rgba(20, 20, 22, .12); }
+.chapter.is-lit .specimen { filter: none; box-shadow: 0 0 0 1px rgba(245, 184, 0, .9), 0 0 0 7px var(--paper-1), 0 0 0 9px rgba(245, 184, 0, .6), 0 14px 40px rgba(245, 184, 0, .35); }
+
+/* before / after */
+.compare__stage { border-color: rgba(20, 20, 22, .18); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .35); }
+.compare__range label { color: var(--ink-2); }
+.compare__range output { color: var(--brass-text); }
+
+/* featured */
+.viewer { background: #fff; border-color: rgba(20, 20, 22, .15); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .3); }
+.viewer::after { display: none; }
+.chip { border-color: rgba(20, 20, 22, .25); color: var(--ink); }
+.chip:hover { border-color: var(--brass); }
+
+/* forms */
+.field > span:first-child { color: var(--ink-2); }
+.field input, .field select, .field textarea, .search input { background: #fff; color: var(--ink); border-color: rgba(20, 20, 22, .22); }
+.field input::placeholder, .field textarea::placeholder, .search input::placeholder { color: #8a8a8e; }
+.field input:hover, .field select:hover, .field textarea:hover, .search input:hover { border-color: rgba(20, 20, 22, .45); }
+.field select { background-image: linear-gradient(45deg, transparent 50%, #55565a 50%), linear-gradient(135deg, #55565a 50%, transparent 50%); }
+.err { color: #c0392b; }
+.form-msg { color: var(--ink-2); }
+.form-msg[data-kind='ok'] { color: #1f7a3a; }
+.form-msg[data-kind='error'] { color: #c0392b; }
+.quote__form { background: #fff; border: 1px solid var(--line); box-shadow: 0 20px 50px -24px rgba(0, 0, 0, .25); }
+.chip-tag { background: rgba(245, 184, 0, .2); border-color: rgba(169, 122, 0, .6); color: var(--ink); }
+.chip-tag button { background: rgba(20, 20, 22, .1); color: var(--ink); }
+
+/* catalogue + planner cards */
+.cat-card { background: #fff; border-color: var(--line); box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .25); }
+.cat-card:not(.is-skeleton):hover { border-color: rgba(245, 184, 0, .9); box-shadow: 0 22px 44px -20px rgba(0, 0, 0, .3); }
+.cat-card__img { background: #f1f1ee; }
+.cat-card__cat { color: var(--brass-text); }
+.cat-empty, .pager__info, .planner__src, .planner__notes { color: var(--grey); }
+.planner__notes .warn { color: #a85a00; }
+.planner__map { background: #fff; border-color: var(--line); }
+.kpi { background: #fff; border-color: var(--line); }
+.kpi dt { color: var(--grey); }
+.kpi dd { color: var(--ink); }
+.kpi small { color: var(--grey); }
+.sk { background: linear-gradient(90deg, #e8e8e5 25%, #f6f6f3 50%, #e8e8e5 75%); background-size: 200% 100%; }
+.is-skeleton .cat-card__img { background: linear-gradient(90deg, #e8e8e5 25%, #f6f6f3 50%, #e8e8e5 75%); background-size: 200% 100%; }
+
+/* buttons that sit on light backgrounds */
+html[data-btn='glass'] .page .btn:not(.btn--solid) {
+  color: var(--ink); border-color: rgba(20, 20, 22, .2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .55));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12), inset 0 1px 0 #fff;
+}
+html[data-btn='glass'] .page .btn:not(.btn--solid):hover { border-color: var(--brass); box-shadow: 0 10px 28px rgba(0, 0, 0, .16), 0 0 0 3px rgba(245, 184, 0, .35); }
+html[data-btn='cut'] .page .btn:not(.btn--solid)::before { background: rgba(20, 20, 22, .55); }
+html[data-btn='cut'] .page .btn:not(.btn--solid):hover::before { background: var(--brass); }
+
+/* header once it turns solid: white, with dark text and the grey logo */
+.nav.is-solid { background: rgba(255, 255, 255, .94); box-shadow: 0 1px 0 rgba(20, 20, 22, .1), 0 8px 24px rgba(0, 0, 0, .06); }
+.nav.is-solid .logo { --lg: var(--grey); }
+.nav.is-solid .nav__links a { color: #2a2a2c; }
+.nav.is-solid .nav__sound { color: #55565a; }
+.nav.is-solid .nav__style { color: #2a2a2c; border-color: rgba(20, 20, 22, .28); }
+.nav.is-solid .nav__style:hover { background: rgba(245, 184, 0, .25); }
+
+/* footer: soft charcoal instead of black */
+.footer { background: #1f1f21; border-top: 4px solid var(--brass); }
+
+/* ---- photographs: slow, gentle camera drift so the stills stay alive ---- */
+@keyframes drift { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.07) translate3d(-1.2%, -.8%, 0); } }
+.plate__img, .specimen__img, .viewer__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.plate__img { opacity: 0; transition: opacity 1s ease; animation: drift 26s ease-in-out infinite alternate; }
+.plate__frame.is-ready .plate__img { opacity: 1; }
+.specimen__img { animation: drift 18s ease-in-out infinite alternate; }
+.viewer__img { animation: drift 24s ease-in-out infinite alternate; transition: opacity .7s ease; }
+.viewer__img--on { z-index: 1; }
+.viewer__img--off { filter: brightness(.82) saturate(.75); }
+.compare__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }   /* no drift: the clip edge must stay aligned with the divider */
+.plate__frame { background: #ecebe6; border-color: var(--line); box-shadow: 0 24px 50px -26px rgba(0, 0, 0, .45); }
+.plate__frame::after { border-color: rgba(255, 255, 255, .55); }
+.plate__wait { color: var(--grey); }
+#p-hero { opacity: 0; transition: opacity 1.4s ease; animation: drift 34s ease-in-out infinite alternate; z-index: 4; }
+#p-hero.is-on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .plate__img, .specimen__img, .viewer__img, #p-hero { animation: none; }
+}
+
+/* ---- a brighter, friendlier hero: lift the photograph, ease the overlays ---- */
+#p-hero { filter: brightness(1.22) contrast(1.03) saturate(1.06); }
+.is-ready .vignette { opacity: .35; transition: opacity 1.5s ease; }
+.is-ready .hero::before {
+  background: linear-gradient(90deg, rgba(8, 8, 9, .62) 0%, rgba(8, 8, 9, .28) 40%, transparent 66%), linear-gradient(0deg, rgba(8, 8, 9, .5) 0%, transparent 38%);
+}
+@media (max-width: 760px) {
+  .is-ready .hero::before { background: linear-gradient(0deg, rgba(8, 8, 9, .82) 0%, rgba(8, 8, 9, .5) 42%, rgba(8, 8, 9, .1) 75%, transparent); }
+}

@@ -12,12 +12,6 @@ const jobs = [
   ['intro-pull', ...P, '--scrub', '--out', 'intro-pull-m', '--max', '6000000'],
   ['intro', ...L, '--crf', '25'],
   ['intro', ...P, '--out', 'intro-m', '--crf', '25'],
-  ['hero', ...L], ['hero', ...P, '--out', 'hero-m'],
-  ['room-unlit', ...L], ['room-lit', ...L],
-  ['room-unlit', ...P, '--out', 'room-unlit-m'], ['room-lit', ...P, '--out', 'room-lit-m'],
-  ...['pendant', 'sconce', 'table', 'floor', 'ceiling'].map((k, i) => [`lamp-${k}`, ...S, '--out', `lamp-${i + 1}`]),
-  ...['glass', 'brass', 'patina', 'walnut-linen'].map((k) => [`craft-${k}`, ...Q]),
-  ['table-lamp-on', ...T], ['table-lamp-off', ...T],
 ];
 const only = process.argv.slice(2);
 for (const job of jobs) {

@@ -38,3 +38,21 @@ export async function query(text, params = []) {
 export async function closePool() {
   if (pool) { await pool.end(); pool = null; }
 }
+
+/** run `fn(client)` inside a transaction (commit on success, rollback on any error) */
+export async function tx(fn) {
+  const p = getPool();
+  if (!p) throw Object.assign(new Error('database not configured'), { code: 'NO_DB' });
+  const client = await p.connect();
+  try {
+    await client.query('begin');
+    const out = await fn(client);
+    await client.query('commit');
+    return out;
+  } catch (err) {
+    await client.query('rollback').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
+}

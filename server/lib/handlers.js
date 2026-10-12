@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { hasDb, query } from './db.js';
 import { TTLCache } from './cache.js';
-import { PRODUCT_SEED, CATEGORIES } from './seed.js';
+import { PRODUCT_SEED, CATEGORIES, defaultImage } from './seed.js';
 import { validateInquiry, validateEmail, isHoneypot, ValidationError, RateLimiter } from './validate.js';
 import { plan, normalise } from './lighting.js';
 
@@ -33,45 +33,70 @@ export async function safely(fn) {
 }
 
 /* ------------------------------------------------------------------ products */
+const SORTS = {
+  default: 'sort, created_at desc',
+  featured: 'featured desc, sort',
+  name: 'name',
+  'price-asc': 'price_bdt asc nulls last, sort',
+  'price-desc': 'price_bdt desc nulls last, sort',
+};
+
 function parseListQuery(q = {}) {
   const category = typeof q.category === 'string' && CATEGORIES.includes(q.category) ? q.category : '';
   const text = typeof q.q === 'string' ? q.q.trim().slice(0, 80) : '';
+  const sort = typeof q.sort === 'string' && Object.hasOwn(SORTS, q.sort) ? q.sort : 'default';
   const page = Math.max(1, Math.min(1000, parseInt(q.page, 10) || 1));
   const limit = Math.max(1, Math.min(24, parseInt(q.limit, 10) || 9));
-  return { category, text, page, limit };
+  return { category, text, sort, page, limit };
 }
 
-function listFromSeed({ category, text, page, limit }) {
+const shape = (p) => ({
+  slug: p.slug, name: p.name, category: p.category, description: p.description,
+  price_bdt: p.price_bdt ?? null, stock: p.stock ?? null, featured: Boolean(p.featured),
+  images: p.images && p.images.length ? p.images : [defaultImage(p.slug)], is_demo: p.is_demo !== false,
+});
+
+const priceKey = (p) => (p.price_bdt == null ? Infinity : p.price_bdt);
+const SEED_SORTS = {
+  default: () => 0,
+  featured: (a, b) => Number(b.featured) - Number(a.featured) || a.sort - b.sort,
+  name: (a, b) => a.name.localeCompare(b.name),
+  'price-asc': (a, b) => priceKey(a) - priceKey(b) || a.sort - b.sort,
+  'price-desc': (a, b) => (priceKey(b) === Infinity ? -1 : priceKey(a) === Infinity ? 1 : priceKey(b) - priceKey(a)) || a.sort - b.sort,
+};
+
+function listFromSeed({ category, text, sort, page, limit }) {
   const needle = text.toLowerCase();
-  const rows = PRODUCT_SEED.filter((p) => (!category || p.category === category) && (!needle || `${p.name} ${p.description}`.toLowerCase().includes(needle)));
-  const total = rows.length;
-  return { items: rows.slice((page - 1) * limit, page * limit), total, source: 'demo' };
+  const rows = PRODUCT_SEED
+    .filter((p) => p.active !== false && (!category || p.category === category) && (!needle || `${p.name} ${p.description}`.toLowerCase().includes(needle)))
+    .sort(SEED_SORTS[sort]);
+  return { items: rows.slice((page - 1) * limit, page * limit).map(shape), total: rows.length, source: 'demo' };
 }
 
-async function listFromDb({ category, text, page, limit }) {
-  const where = [], params = [];
+async function listFromDb({ category, text, sort, page, limit }) {
+  const where = ['active'], params = [];
   if (category) { params.push(category); where.push(`category = $${params.length}`); }
   if (text) {
     params.push(text); params.push(`%${escapeLike(text)}%`);
     where.push(`(search @@ websearch_to_tsquery('simple', $${params.length - 1}) or name ilike $${params.length})`);
   }
+  const filterParams = [...params];
   params.push(limit, (page - 1) * limit);
-  const sql = `select slug, name, category, description, is_demo, count(*) over() as total
-               from products ${where.length ? 'where ' + where.join(' and ') : ''}
-               order by sort, created_at desc limit $${params.length - 1} offset $${params.length}`;
+  const sql = `select slug, name, category, description, price_bdt, stock, images, featured, is_demo, count(*) over() as total
+               from products where ${where.join(' and ')}
+               order by ${SORTS[sort]} limit $${params.length - 1} offset $${params.length}`;
   const { rows } = await query(sql, params);
   let total = rows.length ? Number(rows[0].total) : 0;
   if (!rows.length && page > 1) {                                  // page past the end: report the real total
-    const c = await query(`select count(*)::int as n from products ${where.length ? 'where ' + where.join(' and ') : ''}`, params.slice(0, params.length - 2));
-    total = c.rows[0].n;
+    total = (await query(`select count(*)::int as n from products where ${where.join(' and ')}`, filterParams)).rows[0].n;
   }
-  return { items: rows.map(({ total: _t, ...r }) => r), total, source: 'database' };
+  return { items: rows.map(({ total: _t, ...r }) => shape(r)), total, source: 'database' };
 }
 
 export async function listProducts(rawQuery) {
   return safely(async () => {
     const q = parseListQuery(rawQuery);
-    const key = `p:${q.category}|${q.text.toLowerCase()}|${q.page}|${q.limit}|${hasDb()}`;
+    const key = `p:${q.category}|${q.text.toLowerCase()}|${q.sort}|${q.page}|${q.limit}|${hasDb()}`;
     const data = await productCache.wrap(key, async () => {
       const base = hasDb() ? await listFromDb(q) : listFromSeed(q);
       return { ...base, page: q.page, limit: q.limit, pages: Math.max(1, Math.ceil(base.total / q.limit)), categories: CATEGORIES };
